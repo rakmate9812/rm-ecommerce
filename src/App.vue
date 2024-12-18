@@ -1,14 +1,24 @@
 <template>
-  <div>
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view />
+  <div id="app">
+    <TheAppMenu />
+    <v-container id="app">
+      <router-view />
+    </v-container>
   </div>
 </template>
 
+<script>
+import TheAppMenu from "./components/TheAppMenu.vue";
+export default {
+  components: { TheAppMenu },
+};
+</script>
+
 <style>
+.test {
+  outline: 1px solid red;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
