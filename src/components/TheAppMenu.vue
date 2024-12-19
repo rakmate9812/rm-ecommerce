@@ -8,8 +8,9 @@
           </router-link>
         </v-col>
         <v-col>
-          <v-btn class="nav-button" text to="/">Kezdőlap</v-btn>
-          <v-btn class="nav-button" text to="/about">Rólunk</v-btn>
+          <v-btn class="nav-button" text to="/user">Fiók</v-btn>
+          <v-btn class="nav-button" text to="/favourites">Későbbre mentve</v-btn>
+          <v-btn class="nav-button" text to="/cart">Bevásárlókocsi</v-btn>
           <v-btn class="nav-button" text to="/admin">Admin</v-btn>
         </v-col>
       </v-row>
