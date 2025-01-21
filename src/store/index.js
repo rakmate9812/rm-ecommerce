@@ -2,13 +2,19 @@
 import { createStore } from 'vuex'
 import db from "../firebaseConfig";
 import { ref, set, push } from "firebase/database";
+import { fetchDataFromDatabase } from "@/services/firebaseService";
 
 export default createStore({
   state: {
+    data: {}, 
   },
   getters: {
+    getData: (state) => state.data,
   },
   mutations: {
+    setData(state, payload) {
+      state.data = payload;
+    },
   },
   actions: {
     /**
@@ -42,6 +48,17 @@ export default createStore({
         console.log("Product added with ID:", newRef.key);
       } catch (error) {
         console.error("Error adding product to DB:", error);
+      }
+    },
+    /**
+     * GET method to fetch data from firebase real time database
+     */
+    async fetchData({ commit }, path) {
+      try {
+        const data = await fetchDataFromDatabase(path);
+        commit("setData", data || {}); // Commit data to the store
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
       }
     },
   },
