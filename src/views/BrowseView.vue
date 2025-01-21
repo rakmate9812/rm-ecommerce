@@ -1,6 +1,6 @@
 <!-- this is the browse screen but also the Home page -->
 <template>
-  <div>
+  <div class="test">
     <TheCategories />
     <TheSaleItems />
     <TheSubCategories />
@@ -24,4 +24,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

@@ -32,7 +32,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addToDb"]), // Map Vuex action
+    ...mapActions(["addProductToDb"]), // Map Vuex action
     async submitProduct() {
       if (this.productName && this.productPrice != null) {
         try {
@@ -43,7 +43,7 @@ export default {
           };
 
           // Call the Vuex action to add the product
-          await this.addToDb(product);
+          await this.addProductToDb(product);
 
           // Clear the form
           this.productName = "";
