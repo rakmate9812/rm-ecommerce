@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container class="category-navbar" fluid>
-      <v-row class="category-row ml-10" justify="left" align="center" no-gutters>
+      <v-row class="category-row ml-10" no-gutters>
         <v-btn
           v-for="category in categories"
           :key="category"

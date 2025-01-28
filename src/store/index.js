@@ -1,67 +1,77 @@
 /* eslint-disable */
-import { createStore } from 'vuex'
+import { createStore } from "vuex";
 import db from "../firebaseConfig";
 import { ref, set, push } from "firebase/database";
-import { fetchDataFromDatabase } from "@/services/firebaseService";
+import { fetchDataFromDatabase, getFirstLevelPaths } from "@/services/firebaseService";
 
 export default createStore({
   state: {
-    data: {}, 
+    // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
+    data: {}, // Disclaimer: I decided that because of the small size of the project, the need for classes and types (and possibly using Typescript) is unnecessary   
   },
+
   getters: {
-    getData: (state) => state.data,
+    getData: (state) => (path) => state.data[path] || {},
   },
+
   mutations: {
-    setData(state, payload) {
-      state.data = payload;
+    setData(state, { path, data }) {
+      state.data[path] = data;
     },
   },
+
   actions: {
     /**
-     * POST method for adding data for the firebase real time database
+     * General POST method for adding data to any firebase real-time database path
      */
-    async addProductToDb({ commit }, product) {
+    async addDataToDb({ commit }, { path, data }) {
       try {
-        // Validate the product object
-        if (
-          !product ||
-          typeof product.name !== "string" ||
-          typeof product.price !== "number"
-        ) {
-          throw new Error("Invalid product: Must include 'name' (string) and 'price' (number)");
-        }
-
-        // Prepare the product object with additional metadata
-        const productData = {
-          name: product.name,
-          price: product.price,
-          creationDate: new Date().toISOString(), // Current timestamp in ISO format
+        const enrichedData = {
+          ...data,
+          creationDate: new Date().toISOString(),
         };
+        const reference = ref(db, path);
+        const newRef = push(reference);
 
-        // Get a reference to the 'products' node
-        const reference = ref(db, "products/");
-        const newRef = push(reference); // Generate a unique key for the product using firebase auto id gen
-
-        // Save the product data
-        await set(newRef, productData);
-
-        console.log("Product added with ID:", newRef.key);
+        await set(newRef, enrichedData);
+        console.log(`Data added to '${path}' with ID:`, newRef.key);
       } catch (error) {
-        console.error("Error adding product to DB:", error);
+        console.error(`Error adding data to '${path}':`, error);
       }
     },
+
     /**
-     * GET method to fetch data from firebase real time database
+     * GET method to fetch data from firebase real-time database path
      */
     async fetchData({ commit }, path) {
       try {
         const data = await fetchDataFromDatabase(path);
-        commit("setData", data || {}); // Commit data to the store
+
+        commit("setData", { path, data: data || {} });
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error(`Failed to fetch data from '${path}':`, error);
+      }
+    },
+
+    /**
+     * (Re)Load all data from frt database 
+     */
+    async loadAllData({ commit }) {
+      // TODO: this approach should be reworked via caching
+      try {
+        // Step 1: Get all first-level paths
+        const paths = await getFirstLevelPaths();
+
+        // Step 2: Fetch data for each path and commit to Vuex store
+        for (const path of paths) {
+          const data = await fetchDataFromDatabase(path);
+
+          commit("setData", { path, data: data || {} });
+        }
+      } catch (error) {
+        console.error("Error loading all data from database:", error);
       }
     },
   },
-  modules: {
-  }
-})
+  modules: {},
+});

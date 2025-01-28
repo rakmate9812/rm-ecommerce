@@ -1,22 +1,22 @@
 <template>
   <div class="product-form">
-    <h2>Add Product</h2>
+    <h2>Termék hozzáadása</h2>
     <form @submit.prevent="submitProduct">
       <div>
-        <label for="name">Product Name:</label>
-        <input v-model="productName" id="name" type="text" placeholder="Enter product name" required />
+        <label for="name">Termék neve:</label>
+        <input v-model="productName" id="name" type="text" placeholder="Név" required />
       </div>
       <div>
-        <label for="price">Price:</label>
+        <label for="price">Ár:</label>
         <input
           v-model.number="productPrice"
           id="price"
           type="number"
-          step="0.01"
-          placeholder="Enter product price"
+          step="1"
+          placeholder="Ár"
           required />
       </div>
-      <button type="submit">Add Product</button>
+      <button type="submit">Termék hozzáadása</button>
     </form>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["addProductToDb"]), // Map Vuex action
+    ...mapActions(["addDataToDb"]), // Vuex action
     async submitProduct() {
       if (this.productName && this.productPrice != null) {
         try {
@@ -42,8 +42,11 @@ export default {
             price: this.productPrice,
           };
 
-          // Call the Vuex action to add the product
-          await this.addProductToDb(product);
+          // Call the generalized Vuex action with the path and product data
+          await this.addDataToDb({
+            path: "products", // Specify the database path
+            data: product,
+          });
 
           // Clear the form
           this.productName = "";
@@ -52,6 +55,7 @@ export default {
           alert("Product added successfully!");
         } catch (error) {
           console.error("Error adding product:", error);
+          alert("Failed to add product. Please try again.");
         }
       } else {
         alert("Please fill in all fields!");
