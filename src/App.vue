@@ -9,7 +9,7 @@
 import TheAppMenu from "./components/TheAppMenu.vue";
 export default {
   async created() {
-    await this.$store.dispatch("loadAllData");
+    // await this.$store.dispatch("loadAllData");
   },
 
   components: { TheAppMenu },

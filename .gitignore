@@ -1,9 +1,13 @@
 git
+STB
 .DS_Store
 node_modules
 /dist
 TODOS.txt
 firebaseConfig.js
+defaultData.json
+FBTest.vue
+
 
 
 # local env files

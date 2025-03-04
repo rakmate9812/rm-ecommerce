@@ -63,7 +63,7 @@ export default {
 
   computed: {
     storeData() {
-      return this.$store.getters.getData("product");
+      return this.$store.getters.getData("products");
     },
   },
 

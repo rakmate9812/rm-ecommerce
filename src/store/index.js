@@ -7,11 +7,12 @@ import { fetchDataFromDatabase, getFirstLevelPaths } from "@/services/firebaseSe
 export default createStore({
   state: {
     // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
-    data: {}, // Disclaimer: I decided that because of the small size of the project, the need for classes and types (and possibly using Typescript) is unnecessary   
+    data: {},
   },
 
   getters: {
-    getData: (state) => (path) => state.data[path] || {},
+    getData: (state) => (path = null) =>
+      path === null ? state.data : state.data[path] || {},
   },
 
   mutations: {
@@ -57,16 +58,16 @@ export default createStore({
      * (Re)Load all data from frt database 
      */
     async loadAllData({ commit }) {
-      // TODO: this approach should be reworked via caching
+      // IMPORTANT: this approach should not be used but only for testing purposes
       try {
         // Step 1: Get all first-level paths
         const paths = await getFirstLevelPaths();
 
         // Step 2: Fetch data for each path and commit to Vuex store
         for (const path of paths) {
-          const data = await fetchDataFromDatabase(path);
+          const allData = await fetchDataFromDatabase(path);
 
-          commit("setData", { path, data: data || {} });
+          commit("setData", { path, data: allData || {} });
         }
       } catch (error) {
         console.error("Error loading all data from database:", error);
