@@ -1,22 +1,18 @@
 <template>
   <div>
-    <!-- <AddProduct /> -->
-    <AddItem></AddItem>
-    <div>-----</div>
-    <!-- <FBTest></FBTest> -->
+    <DisplayItem />
+    <ProductForm />
   </div>
 </template>
 
 <script>
-// import AddProduct from "@/components/AddProduct.vue";
-import AddItem from "@/components/AddItem.vue";
-// import FBTest from "@/components/FBTest.vue";
+import DisplayItem from "@/components/DisplayItem.vue";
+import ProductForm from "@/components/ProductForm.vue";
 
 export default {
   components: {
-    // AddProduct,
-    AddItem,
-    // FBTest,
+    DisplayItem,
+    ProductForm,
   },
 };
 </script>

@@ -55,6 +55,19 @@ export default createStore({
     },
 
     /**
+     * PUT method
+     */
+    async updateDataInDb({ commit }, { path, data }) {
+      try {
+        const reference = ref(db, path);
+        await set(reference, data); // This will overwrite the existing data at the given path
+        console.log(`Data updated at '${path}'`);
+      } catch (error) {
+        console.error(`Error updating data at '${path}':`, error);
+      }
+    },
+
+    /**
      * (Re)Load all data from frt database 
      */
     async loadAllData({ commit }) {
