@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { createStore } from "vuex";
 import db from "../firebaseConfig";
+import { fetchDataFromDatabase, getFirstLevelPaths } from "@/services/firebaseDbService";
 import { ref, set, push } from "firebase/database";
-import { fetchDataFromDatabase, getFirstLevelPaths } from "@/services/firebaseService";
 
 export default createStore({
   state: {

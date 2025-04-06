@@ -1,6 +1,6 @@
 /* eslint-disable */
-import { ref, get } from "firebase/database";
-import db from "../firebaseConfig";
+import { onValue, ref, get, child } from "firebase/database";
+import db, { auth } from "../firebaseConfig";
 
 /**
  * Fetches all data from the Firebase Realtime Database.
@@ -23,23 +23,28 @@ export async function fetchDataFromDatabase(path) {
     }
 }
 
-/**
- * Fetches all first-level paths from the Firebase Realtime Database.
- * @returns {Promise<string[]>} - An array of first-level paths (keys).
- */
-export async function getFirstLevelPaths() {
-    try {
-        const dbRef = ref(db); 
-        const snapshot = await get(dbRef); 
-        if (snapshot.exists()) {
-            return Object.keys(snapshot.val()); // Return the keys of the first-level paths
-        } else {
-            console.warn("No data found in the database.");
-            return []; 
-        }
-    } catch (error) {
-        console.error("Error fetching first-level paths:", error);
-        throw error; 
-    }
+// Utility: wait until auth is ready
+function waitForAuthReady() {
+    return new Promise((resolve) => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            unsubscribe(); // stop listening
+            resolve(user);
+        });
+    });
 }
 
+// Get first-level paths from the database
+export const getFirstLevelPaths = async () => {
+    const user = await waitForAuthReady();
+
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+
+    const snapshot = await get(ref(db));
+    if (snapshot.exists()) {
+        return Object.keys(snapshot.val());
+    } else {
+        return [];
+    }
+};

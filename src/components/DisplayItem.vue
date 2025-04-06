@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { getFirstLevelPaths } from "@/services/firebaseService";
+import { getFirstLevelPaths } from "@/services/firebaseDbService";
 
 export default {
   data() {
