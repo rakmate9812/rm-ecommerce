@@ -37,7 +37,7 @@
             <v-icon left class="me-2">mdi-cart</v-icon>
             Bevásárlókocsi
           </v-btn>
-          <v-btn v-if="true" class="nav-button my-2" variant="text" to="/admin">
+          <v-btn v-if="false" class="nav-button my-2" variant="text" to="/admin">
             <v-icon left class="me-2">mdi-cog</v-icon>
             Admin
           </v-btn>
