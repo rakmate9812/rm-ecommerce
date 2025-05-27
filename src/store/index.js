@@ -8,16 +8,23 @@ export default createStore({
   state: {
     // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
     data: {},
+    user: null,
   },
 
   getters: {
     getData: (state) => (path = null) =>
       path === null ? state.data : state.data[path] || {},
+    currentUser: (state) => state.user,
+    isAdmin: (state) => state.user?.role === "ADMIN",
   },
 
   mutations: {
     setData(state, { path, data }) {
       state.data[path] = data;
+    },
+
+    setUser(state, userData) {
+      state.user = userData;
     },
   },
 
