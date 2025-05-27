@@ -35,11 +35,11 @@ function waitForAuthReady() {
 
 // Get first-level paths from the database
 export const getFirstLevelPaths = async () => {
-    const user = await waitForAuthReady();
+    // const user = await waitForAuthReady();
 
-    if (!user) {
-        throw new Error("User not authenticated");
-    }
+    // if (!user) {
+    //     throw new Error("User not authenticated");
+    // }
 
     const snapshot = await get(ref(db));
     if (snapshot.exists()) {

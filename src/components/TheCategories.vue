@@ -4,11 +4,11 @@
       <v-row class="category-row ml-10" no-gutters>
         <v-btn
           v-for="category in categories"
-          :key="category"
-          :class="['category-btn', { active: selectedCategory === category }]"
+          :key="category.id"
+          :class="['category-btn', { active: selectedCategory === category.id }]"
           outlined
-          @click="selectCategory(category)">
-          {{ category }}
+          @click="selectCategory(category.id)">
+          {{ category.name }}
         </v-btn>
       </v-row>
     </v-container>
@@ -18,15 +18,22 @@
 
 <script>
 export default {
+  props: {
+    categories: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      categories: ["Minden kategória", "Kutya", "Macska", "Kisállat", "Madár", "Aqua"],
-      selectedCategory: "Minden kategória", // Default selected category
+      // TODO - IMPORTANT this is still buggy
+      selectedCategory: "1",
     };
   },
   methods: {
     selectCategory(category) {
       this.selectedCategory = category;
+      this.$emit('categorySelected', category); 
     },
   },
 };

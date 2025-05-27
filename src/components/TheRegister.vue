@@ -1,23 +1,14 @@
 <template>
-  <div class="register">
-    <h2>Register</h2>
-    <form @submit.prevent="handleRegister">
-      <div>
-        <label>Name:</label>
-        <input v-model="name" type="text" required />
-      </div>
-      <div>
-        <label>Email:</label>
-        <input v-model="email" type="email" required />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input v-model="password" type="password" required />
-      </div>
+  <div>
+    <h2 class="text-center">Register</h2>
+    <form @submit.prevent="handleRegister" class="auth-form">
+      <input v-model="name" type="text" placeholder="Name" required />
+      <input v-model="email" type="email" placeholder="Email" required />
+      <input v-model="password" type="password" placeholder="Password" required />
       <button type="submit">Register</button>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </form>
-    <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
-    <p v-if="successMessage" style="color: green">{{ successMessage }}</p>
   </div>
 </template>
 
@@ -42,7 +33,6 @@ export default {
       try {
         await register(this.email, this.password, this.name);
         this.successMessage = "Registration successful!";
-        // Optional: redirect to home or login page
         this.$router.push("/");
       } catch (err) {
         this.errorMessage = err.message;
@@ -51,3 +41,34 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.auth-form button {
+  padding: 10px;
+  background-color: rgba(67, 127, 127);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+</style>

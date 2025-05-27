@@ -1,59 +1,91 @@
-<!-- This is the browse screen but also the Home page -->
 <template>
-  <div>
-    <TheCategories />
-    <TheSaleItems />
-    <TheSubCategories />
-    <v-container class="separator-line" fluid></v-container>
-    <!-- <ShowProducts></ShowProducts> -->
-
-    <!-- Testing -->
-    <TheRegister />
-    <TheLogin v-if="!user" />
-    <TheLogout v-else />
-  </div>
+  <v-container>
+    <TheCategories
+      :categories="categoryList"
+      :selectedCategoryId="selectedCategoryId"
+      @categorySelected="onCategorySelected"
+    />
+    <TheSubcategories
+      v-if="filteredSubcategories.length"
+      :subcategories="filteredSubcategories"
+      :selectedCategoryId="selectedCategoryId"
+      @subcategorySelected="onSubcategorySelected"
+    />
+    <TheSaleItems :filteredProducts="filteredProducts" />
+  </v-container>
 </template>
 
 <script>
-// import ShowProducts from "@/components/ShowProducts.vue";
+import { mapGetters } from "vuex";
 import TheCategories from "@/components/TheCategories.vue";
+import TheSubcategories from "@/components/TheSubCategories.vue";
 import TheSaleItems from "@/components/TheSaleItems.vue";
-import TheSubCategories from "@/components/TheSubCategories.vue";
-
-// Testing
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
-import TheRegister from "@/components/TheRegister.vue";
-import TheLogin from "@/components/TheLogin.vue";
-import TheLogout from "@/components/TheLogout.vue";
 
 export default {
+  name: "BrowseView",
   components: {
     TheCategories,
+    TheSubcategories,
     TheSaleItems,
-    TheSubCategories,
-    // ShowProducts,
-    TheRegister,
-    TheLogin,
-    TheLogout,
   },
-
   data() {
     return {
-      user: null,
+      selectedCategoryId: null, // Initially null, updated later
+      selectedSubcategoryId: null,
     };
   },
+  computed: {
+    ...mapGetters(["getData"]),
+    categoryList() {
+      const categories = this.getData("categories");
+      return Object.entries(categories || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
+    },
 
-  created() {
-    onAuthStateChanged(auth, (currentUser) => {
-      this.user = currentUser;
-    });
+    subcategoryList() {
+      const subcategories = this.getData("subcategories");
+      return Object.entries(subcategories || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
+    },
+
+    productList() {
+      const products = this.getData("products");
+      return Object.entries(products || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
+    },
+
+    filteredSubcategories() {
+      return this.subcategoryList.filter((sub) => String(sub.categoryId) === String(this.selectedCategoryId));
+    },
+
+    filteredProducts() {
+      if (!this.selectedSubcategoryId) return [];
+      return this.productList.filter((product) => product.subcategoryId === this.selectedSubcategoryId);
+    },
+  },
+  methods: {
+    onCategorySelected(categoryId) {
+      this.selectedCategoryId = categoryId;
+      this.selectedSubcategoryId = null;
+    },
+    onSubcategorySelected(subcategoryId) {
+      this.selectedSubcategoryId = subcategoryId;
+    },
+  },
+
+  async created() {
+    await this.$store.dispatch("fetchData", "categories");
+    await this.$store.dispatch("fetchData", "subcategories");
+    await this.$store.dispatch("fetchData", "products");
+
+    // Set default categoryId to default when the component is created
+    this.selectedCategoryId = "1"; // TODO - IMPORTANT this is still buggy
   },
 };
 </script>
-
-<style scoped>
-.separator-line {
-  background-color: #f5f5f5;
-}
-</style>

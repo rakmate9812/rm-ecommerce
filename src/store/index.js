@@ -16,6 +16,21 @@ export default createStore({
       path === null ? state.data : state.data[path] || {},
     currentUser: (state) => state.user,
     isAdmin: (state) => state.user?.role === "ADMIN",
+
+    getSubcategoriesByCategory: (state) => (categoryId) => {
+      const all = state.data.subcategories || {};
+      return Object.entries(all)
+        .filter(([_, subcat]) => subcat.categoryId === categoryId)
+        .map(([id, item]) => ({ id, ...item }));
+    },
+
+    getProductsBySubcategory: (state) => (subcategoryId) => {
+      const all = state.data.products || {};
+      return Object.entries(all)
+        .filter(([_, product]) => product.subcategoryId === subcategoryId)
+        .map(([id, item]) => ({ id, ...item }));
+    },
+
   },
 
   mutations: {
