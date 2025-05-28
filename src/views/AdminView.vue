@@ -1,6 +1,9 @@
 <template>
   <div>
     <DisplayItem />
+
+    <v-container class="separator-line" fluid></v-container>
+
     <ProductForm />
   </div>
 </template>
@@ -17,4 +20,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.separator-line {
+  background-color: #f5f5f5;
+}
+</style>

@@ -1,13 +1,12 @@
 <template>
   <div>
-    <label for="path-select">Select a data node:</label>
+    <h1>Táblázat nézegető</h1>
+    <label for="path-select">Válassz egy táblázatot:</label>
     <select v-model="selectedPath" @change="fetchNode">
       <option v-for="(path, index) in availablePaths" :key="index" :value="path">
         {{ path }}
       </option>
     </select>
-
-    <h2>{{ selectedPath || "No Data Selected" }}</h2>
 
     <table v-if="Object.keys(data).length">
       <thead>
@@ -63,7 +62,7 @@ export default {
         console.error("Error fetching data:", error);
       }
     },
-    
+
     logDataFromStore() {
       console.log(this.$store.getters.getData());
       console.log(this.$store.state.data);
