@@ -1,16 +1,21 @@
 <template>
   <div>
     <v-container fluid>
-      <v-slide-group show-arrows center-active>
-        <v-slide-group-item v-for="subcategory in filteredSubcategories" :key="subcategory.id">
+      <v-slide-group show-arrows center-active v-if="subcategories.length">
+        <v-slide-group-item v-for="subcategory in subcategories" :key="subcategory.id">
           <v-card
-            :class="{ active: selectedSubcategoryId === subcategory.id }"
+            :class="{ active: selectedSubcategory === subcategory.id }"
             @click="selectSubcategory(subcategory.id)">
             <v-img cover :src="subcategory.image" alt="subcategory image" height="80%"></v-img>
             <v-card-text>{{ subcategory.name }}</v-card-text>
           </v-card>
         </v-slide-group-item>
       </v-slide-group>
+
+      <!-- No subcategories available -->
+      <div v-else class="text-center my-5">
+        <p>No subcategories available for this category.</p>
+      </div>
     </v-container>
   </div>
 </template>
@@ -26,16 +31,18 @@ export default {
       type: [String, Number],
       required: true,
     },
-    selectedSubcategoryId: {
-      type: [String, Number],
-      default: null,
-    },
   },
+  data() {
+    return {
+      selectedSubcategory: null,
+    };
+  },
+
   computed: {
     filteredSubcategories() {
-      // If category 1 selected, show all -- TODO - this is quite wrong but will do the job for now
+      // Show all subcategories if categoryId is "1"
       if (String(this.selectedCategoryId) === "1") {
-        return this.subcategories.filter((subcategory) => String(subcategory.categoryId) !== "1");
+        return this.subcategories;
       }
       return this.subcategories.filter(
         (subcategory) => String(subcategory.categoryId) === String(this.selectedCategoryId)
@@ -74,18 +81,17 @@ export default {
 
 .v-card:hover {
   transform: scale(1.07);
-  border-radius: 12px;
   z-index: 1;
 }
 
 .v-card.active {
-  border: 2px solid rgba(67, 127, 127); /* Highlight active tile */
+  border: 2px solid rgba(67, 127, 127);
 }
 
 .v-card .v-img {
   border-radius: 12px;
   object-fit: cover;
-  border-bottom: 1px solid #ddd; /* Separate image from text */
+  border-bottom: 1px solid #ddd;
 }
 
 .v-card .v-card-text {

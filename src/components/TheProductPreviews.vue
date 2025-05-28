@@ -37,55 +37,31 @@
       </v-col>
     </v-row>
 
+    <!-- No products available message -->
     <div v-else class="text-center my-5">
-      <v-progress-circular indeterminate color="primary" />
+      <p>No products found for this selection.</p>
     </div>
   </v-container>
 </template>
 
 <script>
 export default {
+  name: "TheProductPreviews",
+
   props: {
-    products: {
+    filteredProducts: {
       type: Array,
       required: true,
     },
-    selectedCategoryId: {
-      type: [String, Number],
-      required: true,
-    },
-    selectedSubcategoryId: {
-      type: [String, Number],
-      default: null,
-    },
   },
-  computed: {
-    filteredProducts() {
-      // Show all if category 1 is selected
-      if (String(this.selectedCategoryId) === "1") {
-        return this.products;
-      }
 
-      // If a subcategory is selected, filter by it
-      if (this.selectedSubcategoryId) {
-        return this.products.filter(
-          (product) => String(product.subcategoryId) === String(this.selectedSubcategoryId)
-        );
-      }
-
-      // Else, filter by selected category
-      return this.products.filter(
-        (product) => String(product.categoryId) === String(this.selectedCategoryId)
-      );
-    },
-  },
   methods: {
     truncate(text, length) {
       return text && text.length > length ? text.substring(0, length) + "..." : text;
     },
     viewDetails(productId) {
+      // TODO - Navigate to product details or open a modal
       console.log("Clicked product:", productId);
-      // Future: navigate to product details or open a modal
     },
   },
 };

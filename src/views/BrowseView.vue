@@ -5,16 +5,15 @@
       :selectedCategoryId="selectedCategoryId"
       @categorySelected="onCategorySelected" />
 
+      <!-- subcategoryListKey is needed for re-rendering the subcategories on each click on every category,  -->
     <TheSubcategories
-      :subcategories="subcategoryList"
+      v-if="displayedSubcategories.length"
+      :key="subcategoryListKey"
+      :subcategories="displayedSubcategories"
       :selectedCategoryId="selectedCategoryId"
-      :selectedSubcategoryId="selectedSubcategoryId"
       @subcategorySelected="onSubcategorySelected" />
 
-    <TheProductPreviews
-      :products="productList"
-      :selectedCategoryId="selectedCategoryId"
-      :selectedSubcategoryId="selectedSubcategoryId" />
+    <TheProductPreviews :filteredProducts="displayedProducts" />
   </v-container>
 </template>
 
@@ -31,53 +30,32 @@ export default {
     TheSubcategories,
     TheProductPreviews,
   },
+
   data() {
     return {
       selectedCategoryId: "1", // initialized as string to match db keys
       selectedSubcategoryId: null,
+      subcategoryListKey: Math.random(),
     };
   },
+
   computed: {
-    ...mapGetters(["getData"]),
+    ...mapGetters(["categoryList", "subcategoryList", "productList", "filteredSubcategories", "filteredProducts"]),
 
-    categoryList() {
-      const categories = this.getData("categories");
-      return Object.entries(categories || {}).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
+    displayedSubcategories() {
+      return this.filteredSubcategories(this.selectedCategoryId);
     },
 
-    subcategoryList() {
-      const subcategories = this.getData("subcategories");
-      return Object.entries(subcategories || {}).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-    },
-
-    productList() {
-      const products = this.getData("products");
-      return Object.entries(products || {}).map(([id, value]) => ({
-        id,
-        ...value,
-      }));
-    },
-
-    filteredSubcategories() {
-      if (this.selectedCategoryId === "1") return this.subcategoryList;
-      return this.subcategoryList.filter((sub) => sub.categoryId === this.selectedCategoryId);
-    },
-
-    filteredProducts() {
-      if (!this.selectedSubcategoryId) return [];
-      return this.productList.filter((product) => product.subcategoryId === this.selectedSubcategoryId);
+    displayedProducts() {
+      return this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
     },
   },
+
   methods: {
     onCategorySelected(categoryId) {
       this.selectedCategoryId = categoryId;
       this.selectedSubcategoryId = null;
+      this.subcategoryListKey = Math.random(); // force re-render
     },
     onSubcategorySelected(subcategoryId) {
       this.selectedSubcategoryId = subcategoryId;

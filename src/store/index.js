@@ -7,8 +7,7 @@ import { ref, set, push } from "firebase/database";
 export default createStore({
   state: {
     // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
-    data: {
-    },
+    data: {},
     user: null,
   },
 
@@ -18,20 +17,67 @@ export default createStore({
     currentUser: (state) => state.user,
     isAdmin: (state) => state.user?.role === "ADMIN",
 
-    getSubcategoriesByCategory: (state) => (categoryId) => {
-      const all = state.data.subcategories || {};
-      return Object.entries(all)
-        .filter(([_, subcat]) => subcat.categoryId === categoryId)
-        .map(([id, item]) => ({ id, ...item }));
+    // Get categories as array
+    categoryList: (state, getters) => {
+      const categories = getters.getData("categories");
+      return Object.entries(categories || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
     },
 
-    getProductsBySubcategory: (state) => (subcategoryId) => {
-      const all = state.data.products || {};
-      return Object.entries(all)
-        .filter(([_, product]) => product.subcategoryId === subcategoryId)
-        .map(([id, item]) => ({ id, ...item }));
+    subcategoryList: (state, getters) => {
+      const subcategories = getters.getData("subcategories");
+      return Object.entries(subcategories || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      })).filter(
+        (sub) => String(sub.id) !== "1"
+      );;
     },
 
+    productList: (state, getters) => {
+      const products = getters.getData("products");
+      return Object.entries(products || {}).map(([id, value]) => ({
+        id,
+        ...value,
+      }));
+    },
+
+    // Filter subcategories by selectedCategoryId
+    filteredSubcategories: (state, getters) => (selectedCategoryId) => {
+      if (String(selectedCategoryId) === "1") {
+        return getters.subcategoryList;
+      }
+      return getters.subcategoryList.filter(
+        (sub) => String(sub.categoryId) === String(selectedCategoryId)
+      );
+    },
+
+    // Filter products by selectedCategoryId + selectedSubcategoryId
+    filteredProducts: (state, getters) => (selectedCategoryId, selectedSubcategoryId) => {
+      if (String(selectedCategoryId) === "1") {
+        // Category 1 selected - show all if no subcategory, else filter by subcategory
+        return selectedSubcategoryId
+          ? getters.productList.filter(
+            (prod) => String(prod.subcategoryId) === String(selectedSubcategoryId)
+          )
+          : getters.productList;
+      }
+
+      // Else - filter by categoryId (and subcategory if selected)
+      let filtered = getters.productList.filter(
+        (prod) => String(prod.categoryId) === String(selectedCategoryId)
+      );
+
+      if (selectedSubcategoryId) {
+        filtered = filtered.filter(
+          (prod) => String(prod.subcategoryId) === String(selectedSubcategoryId)
+        );
+      }
+
+      return filtered;
+    },
   },
 
   mutations: {
