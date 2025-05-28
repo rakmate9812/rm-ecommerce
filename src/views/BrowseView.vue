@@ -3,15 +3,18 @@
     <TheCategories
       :categories="categoryList"
       :selectedCategoryId="selectedCategoryId"
-      @categorySelected="onCategorySelected"
-    />
+      @categorySelected="onCategorySelected" />
+
     <TheSubcategories
-      v-if="filteredSubcategories.length"
-      :subcategories="filteredSubcategories"
+      :subcategories="subcategoryList"
       :selectedCategoryId="selectedCategoryId"
-      @subcategorySelected="onSubcategorySelected"
-    />
-    <TheSaleItems :filteredProducts="filteredProducts" />
+      :selectedSubcategoryId="selectedSubcategoryId"
+      @subcategorySelected="onSubcategorySelected" />
+
+    <TheProductPreviews
+      :products="productList"
+      :selectedCategoryId="selectedCategoryId"
+      :selectedSubcategoryId="selectedSubcategoryId" />
   </v-container>
 </template>
 
@@ -19,23 +22,24 @@
 import { mapGetters } from "vuex";
 import TheCategories from "@/components/TheCategories.vue";
 import TheSubcategories from "@/components/TheSubCategories.vue";
-import TheSaleItems from "@/components/TheSaleItems.vue";
+import TheProductPreviews from "@/components/TheProductPreviews.vue";
 
 export default {
   name: "BrowseView",
   components: {
     TheCategories,
     TheSubcategories,
-    TheSaleItems,
+    TheProductPreviews,
   },
   data() {
     return {
-      selectedCategoryId: null, // Initially null, updated later
+      selectedCategoryId: "1", // initialized as string to match db keys
       selectedSubcategoryId: null,
     };
   },
   computed: {
     ...mapGetters(["getData"]),
+
     categoryList() {
       const categories = this.getData("categories");
       return Object.entries(categories || {}).map(([id, value]) => ({
@@ -61,7 +65,8 @@ export default {
     },
 
     filteredSubcategories() {
-      return this.subcategoryList.filter((sub) => String(sub.categoryId) === String(this.selectedCategoryId));
+      if (this.selectedCategoryId === "1") return this.subcategoryList;
+      return this.subcategoryList.filter((sub) => sub.categoryId === this.selectedCategoryId);
     },
 
     filteredProducts() {
@@ -78,14 +83,10 @@ export default {
       this.selectedSubcategoryId = subcategoryId;
     },
   },
-
   async created() {
     await this.$store.dispatch("fetchData", "categories");
     await this.$store.dispatch("fetchData", "subcategories");
     await this.$store.dispatch("fetchData", "products");
-
-    // Set default categoryId to default when the component is created
-    this.selectedCategoryId = "1"; // TODO - IMPORTANT this is still buggy
   },
 };
 </script>

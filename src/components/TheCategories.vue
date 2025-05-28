@@ -5,14 +5,13 @@
         <v-btn
           v-for="category in categories"
           :key="category.id"
-          :class="['category-btn', { active: selectedCategory === category.id }]"
+          :class="['category-btn', { active: selectedCategoryId === category.id }]"
           outlined
           @click="selectCategory(category.id)">
           {{ category.name }}
         </v-btn>
       </v-row>
     </v-container>
-    <!-- <p class="selected-text">Selected category: {{ selectedCategory }}</p> -->
   </div>
 </template>
 
@@ -23,17 +22,14 @@ export default {
       type: Array,
       required: true,
     },
-  },
-  data() {
-    return {
-      // TODO - IMPORTANT this is still buggy
-      selectedCategory: "1",
-    };
+    selectedCategoryId: {
+      type: [String, Number],
+      required: true,
+    },
   },
   methods: {
     selectCategory(category) {
-      this.selectedCategory = category;
-      this.$emit('categorySelected', category); 
+      this.$emit("categorySelected", category);
     },
   },
 };

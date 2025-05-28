@@ -4,7 +4,7 @@
       <v-slide-group show-arrows center-active>
         <v-slide-group-item v-for="subcategory in filteredSubcategories" :key="subcategory.id">
           <v-card
-            :class="{ active: selectedSubcategory === subcategory.id }"
+            :class="{ active: selectedSubcategoryId === subcategory.id }"
             @click="selectSubcategory(subcategory.id)">
             <v-img cover :src="subcategory.image" alt="subcategory image" height="80%"></v-img>
             <v-card-text>{{ subcategory.name }}</v-card-text>
@@ -26,20 +26,23 @@ export default {
       type: [String, Number],
       required: true,
     },
-  },
-  data() {
-    return {
-      selectedSubcategory: null, // No subcategory selected by default
-    };
+    selectedSubcategoryId: {
+      type: [String, Number],
+      default: null,
+    },
   },
   computed: {
-    // Filter subcategories based on selectedCategoryId
     filteredSubcategories() {
+      // If category 1 selected, show all -- TODO - this is quite wrong but will do the job for now
+      if (String(this.selectedCategoryId) === "1") {
+        return this.subcategories.filter((subcategory) => String(subcategory.categoryId) !== "1");
+      }
       return this.subcategories.filter(
         (subcategory) => String(subcategory.categoryId) === String(this.selectedCategoryId)
       );
     },
   },
+
   methods: {
     selectSubcategory(id) {
       this.selectedSubcategory = id;

@@ -7,7 +7,8 @@ import { ref, set, push } from "firebase/database";
 export default createStore({
   state: {
     // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
-    data: {},
+    data: {
+    },
     user: null,
   },
 

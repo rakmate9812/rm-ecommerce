@@ -4,7 +4,7 @@
 
     <div v-if="user">
       <p class="text-center">
-        You are logged in as <strong>{{ user.email }}</strong>
+        Be vagy jelentkezve mint <strong>{{ user.email }}</strong>
       </p>
       <TheLogout />
     </div>
