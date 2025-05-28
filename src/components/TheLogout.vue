@@ -1,6 +1,6 @@
 <template>
   <div class="logout-wrapper">
-    <v-btn color="error" @click="handleLogout">Logout</v-btn>
+    <v-btn color="error" @click="handleLogout">Kijeletkezés</v-btn>
   </div>
 </template>
 

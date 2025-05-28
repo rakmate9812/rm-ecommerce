@@ -1,11 +1,13 @@
 <template>
-  <v-container>
+  <div>
     <TheCategories
       :categories="categoryList"
       :selectedCategoryId="selectedCategoryId"
       @categorySelected="onCategorySelected" />
 
-      <!-- subcategoryListKey is needed for re-rendering the subcategories on each click on every category,  -->
+    <TheSaleItems />
+
+    <!-- subcategoryListKey is needed for re-rendering the subcategories on each click on every category,  -->
     <TheSubcategories
       v-if="displayedSubcategories.length"
       :key="subcategoryListKey"
@@ -13,8 +15,10 @@
       :selectedCategoryId="selectedCategoryId"
       @subcategorySelected="onSubcategorySelected" />
 
+    <v-container class="separator-line" fluid></v-container>
+
     <TheProductPreviews :filteredProducts="displayedProducts" />
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -22,11 +26,13 @@ import { mapGetters } from "vuex";
 import TheCategories from "@/components/TheCategories.vue";
 import TheSubcategories from "@/components/TheSubCategories.vue";
 import TheProductPreviews from "@/components/TheProductPreviews.vue";
+import TheSaleItems from "@/components/TheSaleItems.vue";
 
 export default {
   name: "BrowseView",
   components: {
     TheCategories,
+    TheSaleItems,
     TheSubcategories,
     TheProductPreviews,
   },
@@ -68,3 +74,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.separator-line {
+  background-color: #f5f5f5;
+}
+</style>

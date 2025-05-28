@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h2 class="text-center">Register</h2>
+    <h2 class="text-center">Regisztráció</h2>
     <form @submit.prevent="handleRegister" class="auth-form">
-      <input v-model="name" type="text" placeholder="Name" required />
+      <input v-model="name" type="text" placeholder="Név" required />
       <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">Register</button>
+      <input v-model="password" type="password" placeholder="Jelszó" required />
+      <button type="submit">Gyerünk 🐱</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
     </form>

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h2 class="text-center">Login</h2>
+    <h2 class="text-center">Bejelentkezés</h2>
     <form @submit.prevent="handleLogin" class="auth-form">
       <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
+      <input v-model="password" type="password" placeholder="Jelszó" required />
+      <button type="submit">Gyerünk 🐶</button>
       <p v-if="error" class="error">{{ error }}</p>
     </form>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <v-container class="user-view" fluid>
-    <h1 class="text-center">Welcome to Your Account</h1>
+    <h1 class="text-center">Szia!</h1>
 
     <div v-if="user">
       <p class="text-center">
@@ -10,9 +10,16 @@
     </div>
 
     <div v-else class="auth-container">
-      <div class="toggle-buttons">
-        <v-btn @click="authMode = 'login'" :color="authMode === 'login' ? 'primary' : 'grey'"> Login </v-btn>
-        <v-btn @click="authMode = 'register'" :color="authMode === 'register' ? 'primary' : 'grey'"> Register </v-btn>
+      <div class="auth-text">
+        <h3>Jelentkezz be, vagy regisztrálj</h3>
+        <div class="toggle-buttons">
+          <v-btn @click="authMode = 'login'" :color="authMode === 'login' ? 'secondary' : 'grey'">
+            Bejelentkezés
+          </v-btn>
+          <v-btn @click="authMode = 'register'" :color="authMode === 'register' ? 'secondary' : 'grey'">
+            Regisztráció
+          </v-btn>
+        </div>
       </div>
 
       <div class="form-wrapper">
@@ -54,7 +61,6 @@ export default {
 .user-view {
   max-width: 500px;
   margin: auto;
-  padding-top: 30px;
 }
 
 .toggle-buttons {
@@ -70,4 +76,8 @@ export default {
   padding: 20px;
   background: #fafafa;
 }
+.auth-text{
+  margin: 40px;
+}
+
 </style>
