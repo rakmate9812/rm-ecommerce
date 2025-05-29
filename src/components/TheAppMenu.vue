@@ -73,7 +73,7 @@ export default {
 }
 
 .logo-icon {
-  width: 13.75rem;
+  width: 10rem;
   cursor: pointer;
 }
 

@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <TheAppMenu @logoClick="refreshMainView" />
+    <div class="custom-app-bar">
+      <TheAppMenu @logoClick="refreshMainView" />
+    </div>
     <router-view :key="mainViewKey" />
   </div>
 </template>
@@ -30,6 +32,7 @@ export default {
       } else {
         this.$router.push("/");
       }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
   },
 };
@@ -46,5 +49,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #000000;
+}
+
+.custom-app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: white;
+  border-bottom: 1px solid #ccc;
 }
 </style>
