@@ -9,7 +9,9 @@
 import TheAppMenu from "./components/TheAppMenu.vue";
 export default {
   async created() {
-    // await this.$store.dispatch("loadAllData");
+    await this.$store.dispatch("fetchData", "categories");
+    await this.$store.dispatch("fetchData", "subcategories");
+    await this.$store.dispatch("fetchData", "products");
   },
 
   components: { TheAppMenu },

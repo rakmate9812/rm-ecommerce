@@ -67,11 +67,6 @@ export default {
       this.selectedSubcategoryId = subcategoryId;
     },
   },
-  async created() {
-    await this.$store.dispatch("fetchData", "categories");
-    await this.$store.dispatch("fetchData", "subcategories");
-    await this.$store.dispatch("fetchData", "products");
-  },
 };
 </script>
 
