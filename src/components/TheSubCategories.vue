@@ -14,7 +14,7 @@
 
       <!-- No subcategories available -->
       <div v-else class="text-center my-5">
-        <p>No subcategories available for this category.</p>
+        <p>Nincsenek alkategóriák ebben a kategóriában.</p>
       </div>
     </v-container>
   </div>

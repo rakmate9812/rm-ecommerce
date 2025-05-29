@@ -5,12 +5,12 @@
     <v-row v-if="filteredProducts.length">
       <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="rounded-xl" elevation="3">
-          <v-img :src="product.imageUrl || logoImage" height="200px" cover></v-img>
+          <v-img :src="product.imageUrl || logoImage" class="logo-image" cover></v-img>
 
           <v-card-title class="text-truncate">{{ product.name }}</v-card-title>
 
           <v-card-subtitle class="text-grey">
-            {{ truncate(product.description, 60) }}
+            {{ product.shortDescription || "-" }}
           </v-card-subtitle>
 
           <v-card-text>
@@ -25,7 +25,7 @@
     </v-row>
 
     <div v-else class="text-center my-5">
-      <p>Nem található termék eben a kategóriában. Nézz vissza később!</p>
+      <p>Nem található termék ebben a kategóriában. Nézz vissza később!</p>
     </div>
   </v-container>
 </template>
@@ -48,9 +48,6 @@ export default {
   },
 
   methods: {
-    truncate(text, length) {
-      return text && text.length > length ? text.substring(0, length) + "..." : text;
-    },
     viewDetails(productId) {
       // TODO - Navigate to product details or open a modal
       console.log("Clicked product:", productId);
@@ -63,7 +60,8 @@ export default {
 .v-card-title {
   font-size: 1.1rem;
 }
-.v-card-subtitle {
-  min-height: 48px;
+
+.logo-image {
+  height: 23em;
 }
 </style>

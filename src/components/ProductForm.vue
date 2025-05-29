@@ -32,6 +32,7 @@
         </option>
       </select>
 
+      <input v-model="product.shortDescription" placeholder="Short description" />
       <textarea v-model="product.description" placeholder="Description"></textarea>
       <input v-model="product.imageUrl" placeholder="Image URL" />
 
