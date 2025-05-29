@@ -1,3 +1,4 @@
+<!-- Allows to modify/create products in the db  -->
 <template>
   <div>
     <h2>Termék módosító</h2>

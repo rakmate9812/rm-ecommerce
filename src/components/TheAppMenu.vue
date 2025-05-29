@@ -3,9 +3,8 @@
     <v-container fluid>
       <v-row align="center" justify="space-between">
         <v-col cols="2">
-          <router-link to="/">
-            <img src="@/assets/logo.png" alt="Logo" class="logo-icon" />
-          </router-link>
+          <!-- Logo that emits event to parent (App.vue) -->
+          <img src="@/assets/logo.png" @click="$emit('logoClick')" alt="Logo" class="logo-icon" />
         </v-col>
 
         <v-col>
@@ -20,7 +19,7 @@
               single-line
               hide-details
               placeholder="Keresés"
-              clearable></v-text-field>
+              clearable />
           </v-row>
         </v-col>
 
@@ -59,7 +58,6 @@ export default {
       alert(this.searchText);
     },
   },
-
   computed: {
     isAdmin() {
       return this.$store.getters.isAdmin;
@@ -75,7 +73,13 @@ export default {
 }
 
 .logo-icon {
-  width: 75%;
+  width: 13.75rem;
+  cursor: pointer;
+}
+
+.logo-btn {
+  padding: 0;
+  min-width: 0;
 }
 
 .search-row {

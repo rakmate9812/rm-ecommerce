@@ -1,20 +1,37 @@
 <template>
   <div id="app">
-    <TheAppMenu />
-    <router-view />
+    <TheAppMenu @logoClick="refreshMainView" />
+    <router-view :key="mainViewKey" />
   </div>
 </template>
 
 <script>
-import TheAppMenu from "./components/TheAppMenu.vue";
+import TheAppMenu from "@/components/TheAppMenu.vue";
+
 export default {
+  components: {
+    TheAppMenu,
+  },
+  data() {
+    return {
+      mainViewKey: 0,
+    };
+  },
   async created() {
     await this.$store.dispatch("fetchData", "categories");
     await this.$store.dispatch("fetchData", "subcategories");
     await this.$store.dispatch("fetchData", "products");
   },
-
-  components: { TheAppMenu },
+  methods: {
+    // When this happens, the BrowseView.vue will be mounted again on screen, without relaoding any data from firebase
+    refreshMainView() {
+      if (this.$route.path === "/") {
+        this.mainViewKey += 1;
+      } else {
+        this.$router.push("/");
+      }
+    },
+  },
 };
 </script>
 

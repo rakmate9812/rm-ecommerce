@@ -1,3 +1,4 @@
+<!-- Displays all the nodes (tables) from firebase to the admin user -->
 <template>
   <div>
     <h1>Táblázat nézegető</h1>

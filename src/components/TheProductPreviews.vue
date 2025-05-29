@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import logoImage from "@/assets/logo.png"; // This way the logo can be added dynamically to the product cards
+import logoImage from "@/assets/logo-smaller.png"; // This way the logo can be added dynamically to the product cards
 
 export default {
   data() {

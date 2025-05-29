@@ -1,3 +1,4 @@
+<!-- Showing products, outdated, not used -->
 <template>
   <div>
     <p>mind:</p>
