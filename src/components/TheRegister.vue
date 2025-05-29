@@ -6,14 +6,13 @@
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Jelszó" required />
       <button type="submit">Gyerünk 🐱</button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
+      <p v-if="error" class="error">{{ error }}</p>
     </form>
   </div>
 </template>
 
 <script>
-import { register } from "@/services/firebaseAuthService";
+import { register, getAuthErrorMessage } from "@/services/firebaseAuthService";
 
 export default {
   data() {
@@ -21,21 +20,19 @@ export default {
       name: "",
       email: "",
       password: "",
-      errorMessage: "",
-      successMessage: "",
+      error: "",
     };
   },
   methods: {
     async handleRegister() {
-      this.errorMessage = "";
-      this.successMessage = "";
+      this.error = "";
 
       try {
         await register(this.email, this.password, this.name);
-        this.successMessage = "Registration successful!";
-        this.$router.push("/");
+        this.$router.push("/user");
       } catch (err) {
-        this.errorMessage = err.message;
+        console.log(err);
+        this.error = getAuthErrorMessage(err.code);
       }
     },
   },

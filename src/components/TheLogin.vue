@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { login } from "@/services/firebaseAuthService";
+import { login, getAuthErrorMessage } from "@/services/firebaseAuthService";
 
 export default {
   data() {
@@ -28,7 +28,8 @@ export default {
         await login(this.email, this.password);
         this.$router.push("/user");
       } catch (err) {
-        this.error = err.message;
+        console.log(err);
+        this.error = getAuthErrorMessage(err.code);
       }
     },
   },

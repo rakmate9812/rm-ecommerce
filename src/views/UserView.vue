@@ -10,16 +10,12 @@
     </div>
 
     <div v-else class="auth-container">
-      <div class="auth-text">
-        <h3>Jelentkezz be, vagy regisztrálj</h3>
-        <div class="toggle-buttons">
-          <v-btn @click="authMode = 'login'" :color="authMode === 'login' ? 'secondary' : 'grey'">
-            Bejelentkezés
-          </v-btn>
-          <v-btn @click="authMode = 'register'" :color="authMode === 'register' ? 'secondary' : 'grey'">
-            Regisztráció
-          </v-btn>
-        </div>
+      <h3>Jelentkezz be, vagy regisztrálj</h3>
+      <div class="toggle-buttons">
+        <v-btn @click="authMode = 'login'" :color="authMode === 'login' ? 'secondary' : 'grey'"> Bejelentkezés </v-btn>
+        <v-btn @click="authMode = 'register'" :color="authMode === 'register' ? 'secondary' : 'grey'">
+          Regisztráció
+        </v-btn>
       </div>
 
       <div class="form-wrapper">
@@ -66,7 +62,7 @@ export default {
 .toggle-buttons {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin: 10px 0 30px;
   gap: 10px;
 }
 
@@ -76,8 +72,7 @@ export default {
   padding: 20px;
   background: #fafafa;
 }
-.auth-text{
-  margin: 40px;
+.auth-container {
+  margin-top: 10px;
 }
-
 </style>

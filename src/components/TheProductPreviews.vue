@@ -24,9 +24,8 @@
       </v-col>
     </v-row>
 
-    <!-- No products available message -->
     <div v-else class="text-center my-5">
-      <p>No products found for this selection.</p>
+      <p>Nem található termék eben a kategóriában. Nézz vissza később!</p>
     </div>
   </v-container>
 </template>
