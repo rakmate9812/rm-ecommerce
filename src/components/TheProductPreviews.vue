@@ -5,10 +5,7 @@
     <v-row v-if="filteredProducts.length">
       <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="rounded-xl" elevation="3">
-          <v-img
-            :src="product.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image'"
-            height="200px"
-            cover></v-img>
+          <v-img :src="product.imageUrl || logoImage" height="200px" cover></v-img>
 
           <v-card-title class="text-truncate">{{ product.name }}</v-card-title>
 
@@ -35,8 +32,14 @@
 </template>
 
 <script>
+import logoImage from "@/assets/logo.png"; // This way the logo can be added dynamically to the product cards
+
 export default {
-  name: "TheProductPreviews",
+  data() {
+    return {
+      logoImage,
+    };
+  },
 
   props: {
     filteredProducts: {
