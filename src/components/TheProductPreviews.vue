@@ -18,7 +18,7 @@
           </v-card-text>
 
           <v-card-actions>
-            <v-btn color="primary" variant="plain" class="font-weight-bold" block @click="viewDetails(product.id)">
+            <v-btn color="secondary" variant="plain" class="font-weight-bold" block @click="viewDetails(product.id)">
               Megtekintés
             </v-btn>
           </v-card-actions>
