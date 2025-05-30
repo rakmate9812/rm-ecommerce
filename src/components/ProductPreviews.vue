@@ -75,7 +75,7 @@ export default {
   methods: {
     async addToFavorites(productId) {
       if (!this.$store.state.user) {
-        alert("Kérjük, jelentkezzen be a kedvencekhez adáshoz.");
+        this.$store.commit("showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
       }
 

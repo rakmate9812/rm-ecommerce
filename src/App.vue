@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <BaseModal :visible="modal.visible" :message="modal.message" @ok="onOk" @cancel="onCancel" />
     <div class="custom-app-bar">
       <TheAppMenu @logoClick="refreshMainView" />
     </div>
@@ -9,22 +10,30 @@
 
 <script>
 import TheAppMenu from "@/components/TheAppMenu.vue";
+import { mapState, mapMutations } from "vuex";
+import BaseModal from "@/components/BaseModal.vue";
 
 export default {
   components: {
     TheAppMenu,
+    BaseModal,
   },
+
   data() {
     return {
       mainViewKey: 0,
     };
   },
+
   async created() {
     await this.$store.dispatch("fetchData", "categories");
     await this.$store.dispatch("fetchData", "subcategories");
     await this.$store.dispatch("fetchData", "products");
   },
+
   methods: {
+    ...mapMutations(["hideModal"]),
+
     // When this happens, the BrowseView.vue will be mounted again on screen, without relaoding any data from firebase
     refreshMainView() {
       if (this.$route.path === "/") {
@@ -34,6 +43,23 @@ export default {
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
+
+    // MODAL OPERATIONS
+    onOk() {
+      this.hideModal();
+      this.$emit("modalOk");
+      // Optionally trigger a global event or use a Promise resolver
+    },
+
+    onCancel() {
+      this.hideModal();
+      this.$emit("modalCancel");
+      // Optionally trigger a global event or Promise reject
+    },
+  },
+
+  computed: {
+    ...mapState(["modal"]),
   },
 };
 </script>

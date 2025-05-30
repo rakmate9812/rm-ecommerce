@@ -28,7 +28,7 @@
             <v-icon left class="me-2">mdi-account</v-icon>
             Fiók
           </v-btn>
-          <v-btn class="nav-button" variant="text" to="/favourites">
+          <v-btn class="nav-button" variant="text" @click="toFavorites">
             <v-icon left class="me-2">mdi-heart</v-icon>
             Későbbre mentve
           </v-btn>
@@ -56,6 +56,15 @@ export default {
   methods: {
     loadData() {
       alert(this.searchText);
+    },
+
+    toFavorites() {
+      if (!this.$store.state.user) {
+        this.$store.commit("showModal", "A kedvencek eléréséhez be kell jelentkezz!");
+        return;
+      }
+
+      this.$router.push("/favourites");
     },
   },
   computed: {

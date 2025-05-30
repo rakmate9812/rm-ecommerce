@@ -10,6 +10,10 @@ export default createStore({
     data: {},
     user: null,
     favorites: [], // holds product IDs user favorited
+    modal: {
+      visible: false,
+      message: '',
+    },
   },
 
   getters: {
@@ -102,6 +106,16 @@ export default createStore({
 
     removeFavorite(state, productId) {
       state.favorites = state.favorites.filter(id => id !== productId);
+    },
+
+    showModal(state, message) {
+      state.modal.visible = true;
+      state.modal.message = message;
+    },
+
+    hideModal(state) {
+      state.modal.visible = false;
+      state.modal.message = '';
     },
   },
 
@@ -220,6 +234,19 @@ export default createStore({
       }
     },
     // <--- FAVORITES
+
+    // MODAL --->
+    async confirm({ commit }, message) {
+      return new Promise((resolve) => {
+        commit('showModal', message);
+
+        // Listen for modal response in some way
+        // Could use events or additional state, see below
+        // Here, just a stub; implementation depends on UI setup
+        // You might have to enhance with a callback or event bus
+      });
+    },
+    // <--- MODAL
   },
   modules: {},
 });
