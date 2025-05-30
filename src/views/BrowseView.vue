@@ -16,12 +16,14 @@
 
     <v-container class="separator-line" fluid></v-container>
 
+    <h2 v-if="!noProductsFound" class="mt-2 mb-4">Termékek</h2>
+
     <!-- Product area with loading state -->
     <loading-state
       :loading="loading"
       :not-found="noProductsFound"
       error-text="Nem találhatóak termékek ebben a kategóriában.">
-      <TheProductPreviews :filteredProducts="displayedProducts" />
+      <ProductPreviews :filteredProducts="displayedProducts" />
     </loading-state>
   </div>
 </template>
@@ -30,7 +32,7 @@
 import { mapGetters } from "vuex";
 import TheCategories from "@/components/TheCategories.vue";
 import TheSubcategories from "@/components/TheSubCategories.vue";
-import TheProductPreviews from "@/components/TheProductPreviews.vue";
+import ProductPreviews from "@/components/ProductPreviews.vue";
 import TheSaleItems from "@/components/TheSaleItems.vue";
 import LoadingState from "@/components/LoadingState.vue";
 
@@ -40,7 +42,7 @@ export default {
     TheCategories,
     TheSaleItems,
     TheSubcategories,
-    TheProductPreviews,
+    ProductPreviews,
     LoadingState,
   },
 

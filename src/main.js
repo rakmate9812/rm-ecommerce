@@ -28,9 +28,11 @@ onAuthStateChanged(auth, async (user) => {
 
         const userData = snapshot.exists() ? snapshot.val() : {};
         store.commit("setUser", { uid: user.uid, email: user.email, ...userData });
+        store.dispatch("fetchFavorites");
     } else {
         console.log("User is not logged in");
         store.commit("setUser", null); // Clear user in Vuex
+        store.commit("setFavorites", []); // clear favorites on logout
     }
 });
 

@@ -4,8 +4,8 @@
       :loading="loading"
       :not-found="productNotFound"
       error-text="A termék nem található vagy eltávolították."
-      icon="true"
-      home-button="true">
+      :icon="true"
+      :home-button="true">
       <v-card class="mt-6 pa-6 rounded-xl" elevation="3">
         <v-row>
           <!-- Image -->
@@ -54,9 +54,16 @@
                 <v-icon start>mdi-cart</v-icon> Kosárba
               </v-btn>
 
-              <v-btn color="pink" variant="outlined" @click="addToFavorites">
-                <v-icon start>mdi-heart-outline</v-icon> Kedvencekhez
-              </v-btn>
+              <RateLimitedButton
+                :color="isFavorited ? 'pink' : 'grey'"
+                variant="outlined"
+                :debounceTime="1000"
+                @click="addToFavorites">
+                <v-icon start>
+                  {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
+                </v-icon>
+                {{ isFavorited ? "Már kedvenc" : "Kedvencekhez" }}
+              </RateLimitedButton>
             </div>
           </v-col>
         </v-row>
@@ -68,10 +75,12 @@
 <script>
 import logoImage from "@/assets/logo-smaller.png";
 import LoadingState from "@/components/LoadingState.vue"; // wherever you place it
+import RateLimitedButton from "@/components/RateLimitedButton.vue";
 
 export default {
   components: {
     LoadingState,
+    RateLimitedButton,
   },
   data() {
     return {
@@ -85,18 +94,19 @@ export default {
       loading: true,
     };
   },
+
   created() {
     this.checkProduct();
   },
+
   methods: {
     checkProduct() {
       const products = this.$store.getters.getData("products");
-      const productId = this.$route.params.productId;
 
       // If products not loaded yet, wait for watcher to trigger this function when smtg comes
       if (!Object.keys(products).length) return;
 
-      this.product = products[productId];
+      this.product = products[this.$route.params.productId];
 
       if (this.product) {
         const category = this.$store.getters.categoryList.find(
@@ -116,13 +126,34 @@ export default {
 
       this.loading = false; // stop loading state
     },
+
     addToCart() {
       console.log("Adding to cart:", this.product);
     },
-    addToFavorites() {
-      console.log("Adding to favorites:", this.product);
+
+    async addToFavorites() {
+      if (!this.$store.state.user) {
+        alert("Kérjük, jelentkezzen be a kedvencekhez adáshoz.");
+        return;
+      }
+
+      try {
+        await this.$store.dispatch("toggleFavorite", this.$route.params.productId);
+      } catch (err) {
+        console.error(err);
+        alert("Hiba történt a kedvencek frissítésekor.");
+      }
     },
   },
+
+  computed: {
+    isFavorited() {
+      return this.product && Array.isArray(this.$store.state.favorites)
+        ? this.$store.state.favorites.includes(this.$route.params.productId)
+        : false;
+    },
+  },
+
   watch: {
     "$store.state.data.products": {
       handler() {

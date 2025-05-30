@@ -2,13 +2,14 @@
 import { createStore } from "vuex";
 import db from "../firebaseConfig";
 import { fetchDataFromDatabase, getFirstLevelPaths } from "@/services/firebaseDbService";
-import { ref, set, push } from "firebase/database";
+import { ref, set, push, get, remove } from "firebase/database";
 
 export default createStore({
   state: {
     // The data object gets filled with the firebase real-time database JSON structured data (withinin the fetchData fn)
     data: {},
     user: null,
+    favorites: [], // holds product IDs user favorited
   },
 
   getters: {
@@ -88,6 +89,20 @@ export default createStore({
     setUser(state, userData) {
       state.user = userData;
     },
+
+    setFavorites(state, favorites) {
+      state.favorites = favorites;
+    },
+
+    addFavorite(state, productId) {
+      if (!state.favorites.includes(productId)) {
+        state.favorites.push(productId);
+      }
+    },
+
+    removeFavorite(state, productId) {
+      state.favorites = state.favorites.filter(id => id !== productId);
+    },
   },
 
   actions: {
@@ -155,6 +170,56 @@ export default createStore({
         console.error("Error loading all data from database:", error);
       }
     },
+
+
+    //FAVORITES --->
+    // Calling this after user login to load favorites from fb
+    async fetchFavorites({ commit, state }) {
+      if (!state.user) return;
+      try {
+        const reference = ref(db, `favorites/${state.user.uid}`);
+        const snapshot = await get(reference);
+        const data = snapshot.val();
+        commit("setFavorites", data ? Object.keys(data) : []);
+      } catch (error) {
+        console.error("Failed to fetch favorites:", error);
+      }
+    },
+
+    async addFavoriteToDb({ commit, state }, productId) {
+      if (!state.user) return;
+      try {
+        const product = state.data.products[productId];
+        if (!product) return;
+
+        const reference = ref(db, `favorites/${state.user.uid}/${productId}`);
+        await set(reference, product.name);
+        commit("addFavorite", productId);
+      } catch (error) {
+        console.error("Failed to add favorite:", error);
+      }
+    },
+
+    async removeFavoriteFromDb({ commit, state }, productId) {
+      if (!state.user) return;
+      try {
+        const reference = ref(db, `favorites/${state.user.uid}/${productId}`);
+        await remove(reference);
+        commit("removeFavorite", productId);
+      } catch (error) {
+        console.error("Failed to remove favorite:", error);
+      }
+    },
+
+    // Toggle favorite for a product
+    async toggleFavorite({ state, dispatch }, productId) {
+      if (state.favorites.includes(productId)) {
+        await dispatch("removeFavoriteFromDb", productId);
+      } else {
+        await dispatch("addFavoriteToDb", productId);
+      }
+    },
+    // <--- FAVORITES
   },
   modules: {},
 });
