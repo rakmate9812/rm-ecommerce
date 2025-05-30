@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getDatabase, ref, get } from 'firebase/database'
 
 import BrowseView from '@/views/BrowseView.vue'
+import ProductView from '@/views/ProductView.vue'
 
 const routes = [
   { path: '/', name: 'browse', component: BrowseView },
@@ -29,6 +30,11 @@ const routes = [
     name: 'cart',
     component: () => import('../views/CartView.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/products/:productId',
+    name: 'product',
+    component: ProductView,
   },
 ]
 

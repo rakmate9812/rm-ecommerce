@@ -18,7 +18,9 @@
           </v-card-text>
 
           <v-card-actions>
-            <v-btn color="primary" variant="plain" block @click="viewDetails(product.id)"> Megtekintés </v-btn>
+            <v-btn color="primary" variant="plain" class="font-weight-bold" block @click="viewDetails(product.id)">
+              Megtekintés
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -49,8 +51,7 @@ export default {
 
   methods: {
     viewDetails(productId) {
-      // TODO - Navigate to product details or open a modal
-      console.log("Clicked product:", productId);
+      this.$router.push({ name: "product", params: { productId } });
     },
   },
 };

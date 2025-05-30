@@ -1,6 +1,6 @@
 <template>
   <div>
-    <DisplayItem />
+    <DisplayItems />
 
     <v-container class="separator-line" fluid></v-container>
 
@@ -9,12 +9,12 @@
 </template>
 
 <script>
-import DisplayItem from "@/components/DisplayItem.vue";
+import DisplayItems from "@/components/DisplayItems.vue";
 import ProductForm from "@/components/ProductForm.vue";
 
 export default {
   components: {
-    DisplayItem,
+    DisplayItems,
     ProductForm,
   },
 };

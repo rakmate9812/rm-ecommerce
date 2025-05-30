@@ -3,7 +3,7 @@
   <div>
     <h1>Táblázat nézegető</h1>
     <label for="path-select">Válassz egy táblázatot:</label>
-    <select v-model="selectedPath" @change="fetchNode">
+    <select class="outlined-select" v-model="selectedPath" @change="fetchNode">
       <option v-for="(path, index) in availablePaths" :key="index" :value="path">
         {{ path }}
       </option>
@@ -85,5 +85,9 @@ td {
 }
 th {
   background-color: #f4f4f4;
+}
+
+.outlined-select {
+  outline: 1px solid black;
 }
 </style>

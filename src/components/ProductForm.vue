@@ -56,18 +56,22 @@ export default {
     products() {
       return this.$store.getters.getData("products") || {};
     },
+
     categoryList() {
       return this.$store.getters.categoryList;
     },
+
     filteredSubcategories() {
       return this.$store.getters.filteredSubcategories(this.product.categoryId);
     },
   },
+
   async mounted() {
     await this.$store.dispatch("fetchData", "products");
     await this.$store.dispatch("fetchData", "categories");
     await this.$store.dispatch("fetchData", "subcategories");
   },
+
   methods: {
     getEmptyProduct() {
       return {
@@ -79,6 +83,7 @@ export default {
         imageUrl: "",
       };
     },
+
     loadProduct() {
       if (this.selectedProductId) {
         this.product = { ...this.products[this.selectedProductId] };
@@ -86,6 +91,7 @@ export default {
         this.resetForm();
       }
     },
+
     async submitProduct() {
       try {
         if (this.selectedProductId) {
@@ -106,6 +112,7 @@ export default {
         console.error("Error saving product:", error);
       }
     },
+
     resetForm() {
       this.selectedProductId = "";
       this.product = this.getEmptyProduct();
