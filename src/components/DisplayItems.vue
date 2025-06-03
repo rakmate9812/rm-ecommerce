@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     data() {
-      return this.$store.getters.getData(this.selectedPath);
+      return this.$store.getters["data/getData"](this.selectedPath);
     },
   },
   async mounted() {
@@ -57,16 +57,16 @@ export default {
       if (!this.selectedPath) return;
 
       try {
-        await this.$store.dispatch("fetchData", this.selectedPath);
-        console.log(this.$store.getters.getData(this.selectedPath));
+        await this.$store.dispatch("data/fetchData", this.selectedPath);
+        console.log(this.$store.getters["data/getData"](this.selectedPath));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     },
 
     logDataFromStore() {
-      console.log(this.$store.getters.getData());
-      console.log(this.$store.state.data);
+      console.log("logDataFromStore");
+      console.log(this.$store.state.data.data);
     },
   },
 };

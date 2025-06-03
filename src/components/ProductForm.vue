@@ -54,22 +54,22 @@ export default {
   },
   computed: {
     products() {
-      return this.$store.getters.getData("products") || {};
+      return this.$store.getters["data/getData"]("products") || {};
     },
 
     categoryList() {
-      return this.$store.getters.categoryList;
+      return this.$store.getters["data/categoryList"];
     },
 
     filteredSubcategories() {
-      return this.$store.getters.filteredSubcategories(this.product.categoryId);
+      return this.$store.getters["data/filteredSubcategories"](this.product.categoryId);
     },
   },
 
   async mounted() {
-    await this.$store.dispatch("fetchData", "products");
-    await this.$store.dispatch("fetchData", "categories");
-    await this.$store.dispatch("fetchData", "subcategories");
+    await this.$store.dispatch("data/fetchData", "products");
+    await this.$store.dispatch("data/fetchData", "categories");
+    await this.$store.dispatch("data/fetchData", "subcategories");
   },
 
   methods: {
@@ -95,18 +95,18 @@ export default {
     async submitProduct() {
       try {
         if (this.selectedProductId) {
-          await this.$store.dispatch("updateDataInDb", {
+          await this.$store.dispatch("data/updateDataInDb", {
             path: `products/${this.selectedProductId}`,
             data: this.product,
           });
         } else {
-          await this.$store.dispatch("addDataToDb", {
+          await this.$store.dispatch("data/addDataToDb", {
             path: "products",
             data: this.product,
           });
         }
         alert(`Product ${this.selectedProductId ? "updated" : "added"} successfully!`);
-        await this.$store.dispatch("fetchData", "products");
+        await this.$store.dispatch("data/fetchData", "products");
         this.resetForm();
       } catch (error) {
         console.error("Error saving product:", error);

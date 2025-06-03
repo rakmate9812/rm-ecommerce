@@ -35,9 +35,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["productList"]),
+    ...mapGetters("data", ["productList"]),
     favorites() {
-      return this.$store.state.favorites || [];
+      return this.$store.state.favorites.favorites || [];
     },
 
     favoriteProducts() {
@@ -48,7 +48,7 @@ export default {
 
   methods: {
     handleToggleFavorite(productId) {
-      this.$store.dispatch("toggleFavorite", productId);
+      this.$store.dispatch("favorites/toggleFavorite", productId);
     },
 
     evaluateProductState() {

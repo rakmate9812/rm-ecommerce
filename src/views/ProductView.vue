@@ -101,7 +101,7 @@ export default {
 
   methods: {
     checkProduct() {
-      const products = this.$store.getters.getData("products");
+      const products = this.$store.getters["data/getData"]("products");
 
       // If products not loaded yet, wait for watcher to trigger this function when smtg comes
       if (!Object.keys(products).length) return;
@@ -109,12 +109,12 @@ export default {
       this.product = products[this.$route.params.productId];
 
       if (this.product) {
-        const category = this.$store.getters.categoryList.find(
+        const category = this.$store.getters["data/categoryList"].find(
           (cat) => String(cat.id) === String(this.product.categoryId)
         );
         this.categoryName = category ? category.name : null;
 
-        const subcategory = this.$store.getters.subcategoryList.find(
+        const subcategory = this.$store.getters["data/subcategoryList"].find(
           (sub) => String(sub.id) === String(this.product.subcategoryId)
         );
         this.subcategoryName = subcategory ? subcategory.name : null;
@@ -129,16 +129,23 @@ export default {
 
     addToCart() {
       console.log("Adding to cart:", this.product);
+
+      const cartItem = {
+        productId: this.$route.params.productId,
+        quantity: 1,
+        unitPrice: this.product.price,
+      };
+      this.$store.dispatch("cart/addToCart", cartItem);
     },
 
     async addToFavorites() {
-      if (!this.$store.state.user) {
-        this.$store.commit("showModal", "A kedvencek eléréséhez be kell jelentkezz!");
+      if (!this.$store.state.user.user) {
+        this.$store.commit("modal/showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
       }
 
       try {
-        await this.$store.dispatch("toggleFavorite", this.$route.params.productId);
+        await this.$store.dispatch("favorites/toggleFavorite", this.$route.params.productId);
       } catch (err) {
         console.error(err);
         alert("Hiba történt a kedvencek frissítésekor.");
@@ -148,14 +155,14 @@ export default {
 
   computed: {
     isFavorited() {
-      return this.product && Array.isArray(this.$store.state.favorites)
-        ? this.$store.state.favorites.includes(this.$route.params.productId)
+      return this.product && Array.isArray(this.$store.state.favorites.favorites)
+        ? this.$store.state.favorites.favorites.includes(this.$route.params.productId)
         : false;
     },
   },
 
   watch: {
-    "$store.state.data.products": {
+    "$store.state.data.data.products": {
       handler() {
         this.checkProduct();
       },

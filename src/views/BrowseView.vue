@@ -57,7 +57,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["categoryList", "subcategoryList", "productList", "filteredSubcategories", "filteredProducts"]),
+    ...mapGetters("data", [
+      "categoryList",
+      "subcategoryList",
+      "productList",
+      "filteredSubcategories",
+      "filteredProducts",
+    ]),
 
     displayedSubcategories() {
       return this.filteredSubcategories(this.selectedCategoryId);

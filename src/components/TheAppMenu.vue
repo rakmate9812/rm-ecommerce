@@ -59,8 +59,8 @@ export default {
     },
 
     toFavorites() {
-      if (!this.$store.state.user) {
-        this.$store.commit("showModal", "A kedvencek eléréséhez be kell jelentkezz!");
+      if (!this.$store.state.user.user) {
+        this.$store.commit("modal/showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
       }
 
@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     isAdmin() {
-      return this.$store.getters.isAdmin;
+      return this.$store.getters["user/isAdmin"];
     },
   },
 };

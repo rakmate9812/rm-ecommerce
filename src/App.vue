@@ -26,13 +26,13 @@ export default {
   },
 
   async created() {
-    await this.$store.dispatch("fetchData", "categories");
-    await this.$store.dispatch("fetchData", "subcategories");
-    await this.$store.dispatch("fetchData", "products");
+    await this.$store.dispatch("data/fetchData", "categories");
+    await this.$store.dispatch("data/fetchData", "subcategories");
+    await this.$store.dispatch("data/fetchData", "products");
   },
 
   methods: {
-    ...mapMutations(["hideModal"]),
+    ...mapMutations("modal", ["hideModal"]),
 
     // When this happens, the BrowseView.vue will be mounted again on screen, without relaoding any data from firebase
     refreshMainView() {
@@ -59,7 +59,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["modal"]),
+    ...mapState("modal", ["modal"]),
   },
 };
 </script>

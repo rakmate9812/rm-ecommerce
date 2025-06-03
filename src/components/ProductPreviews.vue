@@ -69,13 +69,13 @@ export default {
   },
 
   computed: {
-    ...mapState(["favorites"]), // use this sytax also
+    ...mapState("favorites", ["favorites"]), // use this sytax also
   },
 
   methods: {
     async addToFavorites(productId) {
-      if (!this.$store.state.user) {
-        this.$store.commit("showModal", "A kedvencek eléréséhez be kell jelentkezz!");
+      if (!this.$store.state.user.user) {
+        this.$store.commit("modal/showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
       }
 
@@ -84,7 +84,7 @@ export default {
       this.favoriteLocks[productId] = true;
 
       try {
-        await this.$store.dispatch("toggleFavorite", productId);
+        await this.$store.dispatch("favorites/toggleFavorite", productId);
       } catch (err) {
         console.error(err);
         alert("Hiba történt a kedvencek frissítésekor.");
