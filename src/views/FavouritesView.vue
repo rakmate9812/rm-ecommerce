@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 v-if="!noProductsFound" class="mt-2 mb-4">Kedvenc termékeim</h2>
+    <h1 v-if="!noProductsFound" class="mt-2 mb-4">Kedvenc termékeim</h1>
 
     <loading-state
       :loading="loading"
