@@ -4,6 +4,7 @@ export default {
 
     state: {
         user: null,
+        roel: null
     },
 
     getters: {
@@ -14,6 +15,9 @@ export default {
     mutations: {
         setUser(state, userData) {
             state.user = userData;
+        },
+        setRole(state, role) {
+            state.role = role;
         },
     },
 };

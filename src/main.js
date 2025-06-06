@@ -21,18 +21,29 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         console.log("User is logged in:", user.email);
 
-        // Fetch user data from Realtime Database
-        const snapshot = await import("firebase/database").then(({ ref, get }) =>
-            get(ref(db, `users/${user.uid}`))
-        );
+        const { ref, get } = await import("firebase/database");
 
+        // Fetch user data
+        const snapshot = await get(ref(db, `users/${user.uid}`));
         const userData = snapshot.exists() ? snapshot.val() : {};
+
+        // Commit user basic info
         store.commit("user/setUser", { uid: user.uid, email: user.email, ...userData });
+
+        // Fetch and commit user role if exists
+        const roleSnapshot = await get(ref(db, `users/${user.uid}/role`));
+        const role = roleSnapshot.exists() ? roleSnapshot.val() : null;
+        store.commit("user/setRole", role);
+
+        // Fetch favorites
         store.dispatch("favorites/fetchFavorites");
+
     } else {
         console.log("User is not logged in");
-        store.commit("user/setUser", null); // Clear user in Vuex
-        store.commit("favorites/setFavorites", []); // clear favorites on logout
+
+        store.commit("user/setUser", null);
+        store.commit("user/setRole", null);
+        store.commit("favorites/setFavorites", []);
     }
 });
 

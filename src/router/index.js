@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { getDatabase, ref, get } from 'firebase/database'
+import store from '@/store';
 
 import BrowseView from '@/views/BrowseView.vue'
 import ProductView from '@/views/ProductView.vue'
@@ -42,59 +41,35 @@ const router = createRouter({
   routes
 })
 
-// Helper to wait for auth to initialize
-function getCurrentUser() {
-  return new Promise((resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(
-      getAuth(),
-      user => {
-        unsubscribe()
-        resolve(user)
-      },
-      reject
-    )
-  })
-}
-
 // Route Guard
-router.beforeEach(async (to, from, next) => {
-  console.log("Navigating to:", to.fullPath)
+router.beforeEach((to, from, next) => {
+  const user = store.state.user.user;
+  const role = store.state.user.role;
 
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
 
-  try {
-    const user = await getCurrentUser()
-    console.log("Current user:", user)
-
-    if (requiresAuth && !user) {
-      console.log("Not logged in, redirecting")
-      return next('/') // redirect to home
-    }
-
-    if (requiresAdmin) {
-      console.log("Checking admin role...")
-      const db = getDatabase()
-      const roleSnapshot = await get(ref(db, `users/${user.uid}/role`))
-      const role = roleSnapshot.val()
-      console.log("User role:", role)
-
-      if (role === 'ADMIN') {
-        console.log("Access granted")
-        return next()
-      } else {
-        console.log("Not an admin, redirecting")
-        return next('/')
-      }
-    }
-
-    console.log("No auth/admin required, proceeding")
-    return next()
-  } catch (error) {
-    console.error("Route guard error:", error)
-    return next('/')
+  if (to.path === '/favourites' && !user) {
+    store.commit('modal/showModal', 'A kedvencek eléréséhez be kell jelentkezz!');
+    return;
   }
-})
+
+  if (requiresAuth && !user) {
+    return next('/');
+  }
+
+  if (requiresAdmin) {
+    if (role === 'ADMIN') {
+      return next();
+    } else {
+      return next('/');
+    }
+  }
+
+  return next();
+});
+
+
 
 
 export default router
