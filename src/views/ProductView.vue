@@ -50,15 +50,26 @@
 
             <!-- Actions centered under the details -->
             <div class="d-flex justify-center flex-wrap ga-4 mt-6">
-              <v-btn color="primary" variant="elevated" @click="addToCart">
+              <!-- <v-btn color="primary" variant="elevated" @click="addToCart">
                 <v-icon start>mdi-cart</v-icon> Kosárba
-              </v-btn>
+              </v-btn> -->
+
+              <RateLimitedButton
+                :color="isAddedToCart ? 'primary' : 'secondary'"
+                variant="elevated"
+                :debounceTime="1000"
+                @rlb-click="toggleToCart">
+                <v-icon start>
+                  {{ isAddedToCart ? "mdi-cart" : "mdi-cart-outline" }}
+                </v-icon>
+                {{ isAddedToCart ? "Már kosárban" : "Kosárba" }}
+              </RateLimitedButton>
 
               <RateLimitedButton
                 :color="isFavorited ? 'pink' : 'grey'"
                 variant="outlined"
                 :debounceTime="1000"
-                @click="addToFavorites">
+                @rlb-click="toggleToFavorites">
                 <v-icon start>
                   {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
                 </v-icon>
@@ -127,18 +138,12 @@ export default {
       this.loading = false; // stop loading state
     },
 
-    addToCart() {
-      console.log("Adding to cart:", this.product);
-
-      const cartItem = {
-        productId: this.$route.params.productId,
-        quantity: 1,
-        unitPrice: this.product.price,
-      };
-      this.$store.dispatch("cart/addToCart", cartItem);
+    toggleToCart() {
+      if (!this.isAddedToCart) this.$store.dispatch("cart/addToCart", this.$route.params.productId);
+      else this.$store.dispatch("cart/removeFromCart", this.$route.params.productId);
     },
 
-    async addToFavorites() {
+    async toggleToFavorites() {
       if (!this.$store.state.user.user) {
         this.$store.commit("modal/showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
@@ -155,9 +160,11 @@ export default {
 
   computed: {
     isFavorited() {
-      return this.product && Array.isArray(this.$store.state.favorites.favorites)
-        ? this.$store.state.favorites.favorites.includes(this.$route.params.productId)
-        : false;
+      return this.$store.state.favorites.favorites.includes(this.$route.params.productId);
+    },
+
+    isAddedToCart() {
+      return this.$store.state.cart.cartItems.map((items) => items.productId).includes(this.$route.params.productId);
     },
   },
 

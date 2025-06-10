@@ -35,7 +35,8 @@ export default {
       if (this.disabled) return;
       this.disabled = true;
 
-      this.$emit("click");
+      // We are inserting our custom event so we can use it instead of regular @click. @click caused some problems (executing twice when clicking)  
+      this.$emit("rlb-click"); 
 
       setTimeout(() => {
         this.disabled = false;

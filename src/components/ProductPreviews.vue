@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row v-if="filteredProducts.length">
+    <v-row>
       <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
         <v-card class="rounded-xl" elevation="3" @click="viewDetails(product.id)">
           <div class="image-container">
@@ -30,26 +30,37 @@
             <strong>{{ product.price }} Ft</strong>
           </v-card-text>
 
-          <v-card-actions>
-            <v-btn color="secondary" variant="plain" class="font-weight-bold" block @click="viewDetails(product.id)">
-              Megtekintés
-            </v-btn>
-          </v-card-actions>
+          <!-- Yeah, this is pretty f'd up :D -->
+          <!-- We need click.stop to prevent the default card clicking event (which is to open the product view) -->
+          <!-- rlb click event is to prevent double clicking (this is actually the RateLimitedButton's problem) -->
+          <div @click.stop>
+            <v-card-actions class="button-actions">
+              <RateLimitedButton
+                :color="isAddedToCart(product.id) ? 'primary' : 'secondary'"
+                variant="plain"
+                :debounceTime="1000"
+                @rlb-click="() => toggleToCart(product.id)">
+                <v-icon start>
+                  {{ isAddedToCart(product.id) ? "mdi-cart" : "mdi-cart-outline" }}
+                </v-icon>
+                {{ isAddedToCart(product.id) ? "Már kosárban" : "Kosárba" }}
+              </RateLimitedButton>
+            </v-card-actions>
+          </div>
         </v-card>
       </v-col>
     </v-row>
-
-    <div v-else class="text-center my-5">
-      <p>Nem található termék ebben a kategóriában. Nézz vissza később!</p>
-    </div>
   </v-container>
 </template>
 
 <script>
 import logoImage from "@/assets/logo-smaller.png";
 import { mapState } from "vuex";
+import RateLimitedButton from "./RateLimitedButton.vue";
 
 export default {
+  components: { RateLimitedButton },
+
   data() {
     return {
       logoImage,
@@ -102,6 +113,18 @@ export default {
     isFavorite(productId) {
       return this.favorites.includes(productId);
     },
+
+    isAddedToCart(productId) {
+      return this.$store.state.cart.cartItems.map((items) => items.productId).includes(productId);
+    },
+
+    toggleToCart(productId) {
+      if (!this.isAddedToCart(productId)) {
+        this.$store.dispatch("cart/addToCart", productId);
+      } else {
+        this.$store.dispatch("cart/removeFromCart", productId);
+      }
+    },
   },
 };
 </script>
@@ -127,5 +150,16 @@ export default {
   z-index: 5;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
+}
+
+.button-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em;
+  gap: 0.5em;
+}
+
+.button-actions .v-btn {
+  flex: 1;
 }
 </style>

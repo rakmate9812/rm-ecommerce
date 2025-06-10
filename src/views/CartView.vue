@@ -14,10 +14,10 @@
             <thead>
               <tr>
                 <th class="text-left text-sm font-semibold">Termék</th>
-                <th class="text-right text-sm font-semibold">Darabszám</th>
+                <th class="text-center text-sm font-semibold">Darabszám</th>
                 <th class="text-right text-sm font-semibold">Egységár (Ft)</th>
                 <th class="text-right text-sm font-semibold">Összesen (Ft)</th>
-                <th class="text-center text-sm font-semibold">Művelet</th>
+                <th class="text-center text-sm font-semibold">Törlés</th>
               </tr>
             </thead>
             <tbody>
@@ -26,8 +26,16 @@
                 :key="item.productId"
                 class="hover:bg-gray-50 cursor-pointer"
                 @click="goToProduct(item.productId)">
-                <td>{{ getProduct(item.productId).name }}</td>
-                <td class="text-right">{{ item.quantity }}</td>
+                <td>{{ item.name }}</td>
+                <td class="text-center">
+                  <v-btn icon size="small" variant="text" @click.stop="decrementQuantity(item.productId)">
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  <span class="mx-2 font-medium">{{ item.quantity }}</span>
+                  <v-btn icon size="small" variant="text" @click.stop="incrementQuantity(item.productId)">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </td>
                 <td class="text-right">{{ item.unitPrice }}</td>
                 <td class="text-right">{{ item.quantity * item.unitPrice }}</td>
                 <td class="text-center">
@@ -57,22 +65,31 @@
 export default {
   computed: {
     cartItems() {
-      return this.$store.getters["cart/cartItems"];
+      return this.$store.getters["cart/cartItemsDetailed"];
     },
+
     cartTotal() {
       return this.$store.getters["cart/cartTotal"];
     },
   },
+  
   methods: {
-    getProduct(id) {
-      return this.$store.getters["data/getData"]("products")[id] || {};
+    incrementQuantity(productId) {
+      this.$store.dispatch("cart/modifyQuantity", { productId, quantity: 1 });
     },
+
+    decrementQuantity(productId) {
+      this.$store.dispatch("cart/modifyQuantity", { productId, quantity: -1 });
+    },
+
     removeFromCart(productId) {
       this.$store.dispatch("cart/removeFromCart", productId);
     },
+
     placeOrder() {
       this.$store.dispatch("cart/placeOrder");
     },
+
     goToProduct(productId) {
       this.$router.push(`/products/${productId}`);
     },
