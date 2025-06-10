@@ -117,6 +117,19 @@ export default {
         },
 
         /**
+        * PUT method
+        */
+        async updateDataInDb({ commit }, { path, data }) {
+            try {
+                const reference = ref(db, path);
+                await set(reference, data); // This will overwrite the existing data at the given path
+                console.log(`Data updated at '${path}'`);
+            } catch (error) {
+                console.error(`Error updating data at '${path}':`, error);
+            }
+        },
+
+        /**
          * (Re)Load all data from firebase real-time database 
          * IMPORTANT: this approach should not be used but only for testing purposes
          */

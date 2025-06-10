@@ -41,7 +41,7 @@
               <v-col cols="12" md="7">
                 <h3 class="font-weight-medium mb-2">Leírás</h3>
                 <div class="description-container">
-                  <p class="text-body-1">
+                  <p class="description text-body-1">
                     {{ product.description || "Nincs leírás megadva." }}
                   </p>
                 </div>
@@ -181,6 +181,7 @@ h1 {
   max-height: 220px;
   overflow-y: auto;
   padding-right: 6px;
+  white-space: pre-line;
 }
 
 .description-container::-webkit-scrollbar {
@@ -190,5 +191,9 @@ h1 {
 .description-container::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
+}
+
+.description {
+  white-space: pre-line;
 }
 </style>
