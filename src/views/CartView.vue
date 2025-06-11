@@ -91,7 +91,7 @@ export default {
     },
 
     placeOrder() {
-      this.$store.dispatch("cart/placeOrder");
+      this.$store.dispatch("orders/placeOrder");
     },
 
     goToProduct(productId) {

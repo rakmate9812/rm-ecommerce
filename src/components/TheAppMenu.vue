@@ -40,6 +40,10 @@
             <v-icon left class="me-2">mdi-cog</v-icon>
             Admin
           </v-btn>
+          <v-btn v-if="testing" class="nav-button my-2" variant="text" @click="test">
+            <v-icon left class="me-2">mdi-wrench</v-icon>
+            Teszt
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -47,13 +51,41 @@
 </template>
 
 <script>
+//TESTING
+import { ref, get } from "firebase/database";
+import db from "@/firebaseConfig";
+//
+
 export default {
   data() {
     return {
       searchText: null,
+      testing: false,
     };
   },
   methods: {
+    async test() {
+      console.log("testing:");
+      console.log(this.$store.state.user.user);
+
+      //  Hardcoded order ID here 
+      const orderId = "";
+
+      try {
+        const orderRef = ref(db, `orders/${orderId}`);
+        const snapshot = await get(orderRef);
+
+        if (snapshot.exists()) {
+          const order = snapshot.val();
+          console.log(`Order (${orderId}):`, order);
+        } else {
+          console.log(`Order with ID '${orderId}' not found.`);
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      }
+    },
+
     loadData() {
       alert(this.searchText);
     },
