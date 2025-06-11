@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from '@/store';
+import store from '@/store'
+import { auth } from '@/firebaseConfig'
 
 import BrowseView from '@/views/BrowseView.vue'
 import ProductView from '@/views/ProductView.vue'
@@ -41,35 +42,36 @@ const router = createRouter({
   routes
 })
 
-// Route Guard
 router.beforeEach((to, from, next) => {
-  const user = store.state.user.user;
-  const role = store.state.user.role;
+  const firebaseUser = auth.currentUser // directly from firebase -> needed here
+  const role = store.state.user.role
+  // const vuexUser = store.state.user.user
 
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
 
-  if (to.path === '/favourites' && !user) {
-    store.commit('modal/showModal', 'A kedvencek eléréséhez be kell jelentkezz!');
-    return;
+  if (to.path === '/favourites') {
+    if (!firebaseUser || (firebaseUser && firebaseUser.isAnonymous)) {
+      store.commit('modal/showModal', 'A kedvencek eléréséhez be kell jelentkezz!')
+      return
+    }
   }
 
-  if (requiresAuth && !user) {
-    return next('/');
+  if (requiresAuth) {
+    if (!firebaseUser || (firebaseUser && firebaseUser.isAnonymous)) {
+      return next('/')
+    }
   }
 
   if (requiresAdmin) {
     if (role === 'ADMIN') {
-      return next();
+      return next()
     } else {
-      return next('/');
+      return next('/')
     }
   }
 
-  return next();
-});
-
-
-
+  return next()
+})
 
 export default router

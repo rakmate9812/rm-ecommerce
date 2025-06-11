@@ -2,7 +2,7 @@
   <v-container class="user-view" fluid>
     <h1 class="text-center">Szia!</h1>
 
-    <div v-if="user">
+    <div v-if="isAuthenticated">
       <p class="text-center">
         Be vagy jelentkezve mint <strong>{{ user.email }}</strong>
       </p>
@@ -27,8 +27,7 @@
 </template>
 
 <script>
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
+import { mapState, mapGetters } from "vuex";
 import TheLogin from "@/components/TheLogin.vue";
 import TheRegister from "@/components/TheRegister.vue";
 import TheLogout from "@/components/TheLogout.vue";
@@ -41,14 +40,12 @@ export default {
   },
   data() {
     return {
-      user: null,
-      authMode: "login", // or 'register'
+      authMode: "login",
     };
   },
-  created() {
-    onAuthStateChanged(auth, (currentUser) => {
-      this.user = currentUser;
-    });
+  computed: {
+    ...mapState("user", ["user"]),
+    ...mapGetters("user", ["isAuthenticated"]),
   },
 };
 </script>

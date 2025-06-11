@@ -63,6 +63,10 @@
 
 <script>
 export default {
+  created() {
+    this.$store.dispatch("cart/fetchCart");
+  },
+
   computed: {
     cartItems() {
       return this.$store.getters["cart/cartItemsDetailed"];
@@ -72,7 +76,7 @@ export default {
       return this.$store.getters["cart/cartTotal"];
     },
   },
-  
+
   methods: {
     incrementQuantity(productId) {
       this.$store.dispatch("cart/modifyQuantity", { productId, quantity: 1 });

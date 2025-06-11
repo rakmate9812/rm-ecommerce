@@ -58,15 +58,10 @@ export default {
 
       try {
         await this.$store.dispatch("data/fetchData", this.selectedPath);
-        console.log(this.$store.getters["data/getData"](this.selectedPath));
+        // console.log(this.$store.getters["data/getData"](this.selectedPath));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    },
-
-    logDataFromStore() {
-      console.log("logDataFromStore");
-      console.log(this.$store.state.data.data);
     },
   },
 };

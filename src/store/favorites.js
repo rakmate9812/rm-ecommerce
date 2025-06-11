@@ -26,7 +26,7 @@ export default {
 
     actions: {
         /**
-         * Calling this after user login to load favorites from fb
+         * Calling this after user login to load favorites from fb - this is needed here not to bloat the data.js. Also way clearer approach
          */
         async fetchFavorites({ commit, rootState }) {
             if (!rootState.user.user) return;

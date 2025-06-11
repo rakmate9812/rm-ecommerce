@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import logoImage from "@/assets/logo-smaller.png";
 import LoadingState from "@/components/LoadingState.vue"; // wherever you place it
 import RateLimitedButton from "@/components/RateLimitedButton.vue";
@@ -144,7 +145,7 @@ export default {
     },
 
     async toggleToFavorites() {
-      if (!this.$store.state.user.user) {
+      if (!this.isAuthenticated) {
         this.$store.commit("modal/showModal", "A kedvencek eléréséhez be kell jelentkezz!");
         return;
       }
@@ -159,6 +160,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters("user", ["isAuthenticated"]),
+
     isFavorited() {
       return this.$store.state.favorites.favorites.includes(this.$route.params.productId);
     },

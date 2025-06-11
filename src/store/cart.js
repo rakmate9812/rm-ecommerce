@@ -1,10 +1,18 @@
+import { ref, set, get } from "firebase/database";
+import db from "@/firebaseConfig";
+
 export default {
     namespaced: true,
+
     state: {
         cartItems: [],
     },
 
     mutations: {
+        SET_CART(state, items) {
+            state.cartItems = items;
+        },
+
         ADD_TO_CART(state, productId) {
             const existingItem = state.cartItems.find(ci => ci.productId === productId);
             if (existingItem) {
@@ -18,48 +26,72 @@ export default {
             state.cartItems = state.cartItems.filter(item => item.productId !== productId);
         },
 
-        CLEAR_CART(state) {
-            state.cartItems = [];
-        },
-
-        // - for decreasing, + for increasing quantity
         MODIFY_QUANTITY(state, { productId, quantity }) {
             const existingItem = state.cartItems.find(ci => ci.productId === productId);
             if (existingItem) {
                 if (existingItem.quantity + quantity <= 0) {
-                    state.cartItems = state.cartItems.filter(item => item.productId !== productId); // remove from cart
+                    state.cartItems = state.cartItems.filter(item => item.productId !== productId);
                 } else {
                     existingItem.quantity += quantity;
                 }
             }
-        }
+        },
 
+        CLEAR_CART(state) {
+            state.cartItems = [];
+        },
     },
 
     actions: {
-        addToCart({ commit }, productId) {
+        // IMPORTANT - we have to fetch the cart for each user from fb. That is why this fn and the cart data cannot go into data.js 
+        // - that would cause unnecessary bloating, and would be unconvenient
+        async fetchCart({ commit, rootState }) {
+            const user = rootState.user.user;
+            if (!user) return;
+
+            const cartRef = ref(db, `carts/${user.uid}`);
+            const snapshot = await get(cartRef);
+            const items = snapshot.exists() ? snapshot.val() : [];
+            commit("SET_CART", items);
+        },
+
+        async addToCart({ commit, dispatch }, productId) {
             commit("ADD_TO_CART", productId);
+            dispatch("syncCart");
         },
 
-        removeFromCart({ commit }, productId) {
+        async removeFromCart({ commit, dispatch }, productId) {
             commit("REMOVE_FROM_CART", productId);
+            dispatch("syncCart");
         },
 
-        clearCart({ commit }) {
+        async modifyQuantity({ commit, dispatch }, { productId, quantity }) {
+            commit("MODIFY_QUANTITY", { productId, quantity });
+            dispatch("syncCart");
+        },
+
+        async clearCart({ commit, dispatch }) {
             commit("CLEAR_CART");
+            dispatch("syncCart");
         },
 
-        modifyQuantity({ commit }, { productId, quantity }) {
-            commit("MODIFY_QUANTITY", { productId, quantity })
-        }
+        async syncCart({ state, rootState }) {
+            const user = rootState.user.user;
+            if (!user) return;
+
+            const cartRef = ref(db, `carts/${user.uid}`);
+            await set(cartRef, state.cartItems);
+        },
     },
 
     getters: {
         cartItemCount: (state) => state.cartItems.reduce((sum, item) => sum + item.quantity, 0),
 
-        cartTotal: (state, getters) => getters.cartItemsDetailed.reduce(
-            (sum, item) => sum + item.quantity * item.unitPrice, 0
-        ),
+        cartTotal: (state, getters) =>
+            getters.cartItemsDetailed.reduce(
+                (sum, item) => sum + item.quantity * item.unitPrice,
+                0
+            ),
 
         cartItems: (state) => state.cartItems,
 

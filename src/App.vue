@@ -29,6 +29,7 @@ export default {
     await this.$store.dispatch("data/fetchData", "categories");
     await this.$store.dispatch("data/fetchData", "subcategories");
     await this.$store.dispatch("data/fetchData", "products");
+    await this.$store.dispatch("cart/fetchCart");
   },
 
   methods: {
