@@ -1,15 +1,19 @@
 <template>
   <v-container class="py-8">
-    <v-row justify="center">
-      <v-col cols="12" md="10">
-        <h1 class="text-3xl font-bold mb-6">🛒 Kosár</h1>
+    <h1 class="text-3xl font-bold mb-6">🛒 Kosár</h1>
+    <loading-state
+      :loading="loading"
+      :not-found="noItemsFoundinCart"
+      error-text="Üres. Adjon hozzá termékeket a vásárláshoz!"
+      :home-button="true">
+      <v-row justify="center">
+        <v-col cols="12" md="10">
+          <!-- <div v-if="cartItems.length === 0" class="text-center py-16">
+            <h2 class="text-2xl font-medium mb-4">A kosár üres.</h2>
+            <p class="text-gray-600">Adjon hozzá termékeket a vásárláshoz!</p>
+          </div>
 
-        <div v-if="cartItems.length === 0" class="text-center py-16">
-          <h2 class="text-2xl font-medium mb-4">A kosár üres.</h2>
-          <p class="text-gray-600">Adjon hozzá termékeket a vásárláshoz!</p>
-        </div>
-
-        <div v-else>
+          <div v-else> -->
           <v-table class="elevation-1 rounded-lg">
             <thead>
               <tr>
@@ -55,16 +59,23 @@
               Tovább a szállításhoz
             </v-btn>
           </div>
-        </div>
-      </v-col>
-    </v-row>
+          <!-- </div> -->
+        </v-col>
+      </v-row>
+    </loading-state>
   </v-container>
 </template>
 
 <script>
+import LoadingState from "@/components/LoadingState.vue";
 export default {
-  created() {
-    this.$store.dispatch("cart/fetchCart");
+  components: { LoadingState },
+
+  data() {
+    return {
+      loading: true,
+      noItemsFoundinCart: true,
+    };
   },
 
   computed: {
@@ -77,7 +88,22 @@ export default {
     },
   },
 
+  created() {
+    this.fetchCartData();
+  },
+
   methods: {
+    async fetchCartData() {
+      this.loading = true;
+      await this.$store.dispatch("cart/fetchCart");
+      this.evaluateCartState();
+    },
+
+    evaluateCartState() {
+      this.noItemsFoundinCart = this.cartItems.length === 0;
+      this.loading = false;
+    },
+
     incrementQuantity(productId) {
       this.$store.dispatch("cart/modifyQuantity", { productId, quantity: 1 });
     },
@@ -101,6 +127,17 @@ export default {
 
     goToProduct(productId) {
       this.$router.push(`/products/${productId}`);
+    },
+  },
+
+  watch: {
+    cartItems: {
+      handler(/*newValue, oldValue*/) {
+        // Avoid evaluating on initial empty state while loading
+        if (!this.loading) {
+          this.evaluateCartState();
+        }
+      },
     },
   },
 };

@@ -11,7 +11,7 @@
 
         <v-radio-group v-model="deliveryData.method" label="Szállítás módja" required>
           <v-radio label="Házhoz szállítás" value="home" />
-          <v-radio label="Személyes átvétel" value="pickup" />
+          <v-radio label="Személyes átvétel" disabled value="pickup" />
         </v-radio-group>
 
         <v-btn color="primary" @click="confirmOrder" prepend-icon="mdi-cart-check">Megrendelés</v-btn>

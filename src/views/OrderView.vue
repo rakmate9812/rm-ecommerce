@@ -36,7 +36,7 @@
             <v-list-item v-for="(item, index) in order.items" :key="index">
               <v-list-item-title>{{ item.name }}</v-list-item-title>
               <v-list-item-subtitle>
-                Mennyiség: {{ item.quantity }} | Darab ár: {{ item.unitPrice }} Ft
+                Mennyiség: {{ item.quantity }} | Darabár: {{ item.unitPrice }} Ft
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
