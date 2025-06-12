@@ -51,8 +51,8 @@
 
           <div class="text-right">
             <p class="text-xl font-bold mb-4">Végösszeg: {{ cartTotal }} Ft</p>
-            <v-btn color="primary" size="large" @click="placeOrder" prepend-icon="mdi-cart-check">
-              Megrendelés leadása
+            <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar">
+              Tovább a szállításhoz
             </v-btn>
           </div>
         </div>
@@ -90,8 +90,13 @@ export default {
       this.$store.dispatch("cart/removeFromCart", productId);
     },
 
-    placeOrder() {
-      this.$store.dispatch("orders/placeOrder");
+    checkout() {
+      if (!this.$store.getters["user/isAuthenticated"]) {
+        this.$store.commit("modal/showModal", "A továbbiakhoz be kell jelentkezz!");
+        return;
+      }
+
+      this.$router.push("/checkout");
     },
 
     goToProduct(productId) {

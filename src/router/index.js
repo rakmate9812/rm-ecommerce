@@ -35,6 +35,18 @@ const routes = [
     name: 'product',
     component: ProductView,
   },
+  {
+    path: "/checkout",
+    name: "Checkout",
+    component: () => import("@/views/CheckoutView.vue"),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: "/order/:orderId",
+    name: "Order",
+    component: () => import("@/views/OrderView.vue"),
+    meta: { requiresAuth: true }
+  },
 ]
 
 const router = createRouter({
@@ -47,9 +59,13 @@ router.beforeEach((to, from, next) => {
   const role = store.state.user.role
   // const vuexUser = store.state.user.user
 
+  // console.log("firebaseuser: ")
+  // console.log(firebaseUser)
+
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin)
 
+  // Creating specific rule for favourites
   if (to.path === '/favourites') {
     if (!firebaseUser || (firebaseUser && firebaseUser.isAnonymous)) {
       store.commit('modal/showModal', 'A kedvencek eléréséhez be kell jelentkezz!')
@@ -57,9 +73,10 @@ router.beforeEach((to, from, next) => {
     }
   }
 
+  // Denying access from non logged in users (even "logged-in" anon where requiresAuth: true)
   if (requiresAuth) {
     if (!firebaseUser || (firebaseUser && firebaseUser.isAnonymous)) {
-      return next('/')
+      return next('/') // TODO - could be better but will do the job
     }
   }
 

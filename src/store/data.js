@@ -98,11 +98,18 @@ export default {
                 const newRef = push(reference);
 
                 await set(newRef, enrichedData);
-                console.log(`Data added to '${path}' with ID:`, newRef.key);
+                // console.log(`Data added to '${path}' with ID:`, newRef.key);
+
+                // Return the new ID so callers can use it
+                return { id: newRef.key };
+
             } catch (error) {
                 console.error(`Error adding data to '${path}':`, error);
+                // Optionally propagate error if desired
+                throw error;
             }
         },
+
 
         /**
          * GET method to fetch data from firebase real-time database path
