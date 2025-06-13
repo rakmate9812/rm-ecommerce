@@ -7,6 +7,23 @@
         Be vagy jelentkezve mint <strong>{{ user.email }}</strong>
       </p>
       <TheLogout />
+
+      <v-divider class="my-5"></v-divider>
+
+      <h3 class="mb-5">Korábbi rendeléseid</h3>
+      <loading-state :loading="loading" :notFound="notFound" error-text="Még nincs rendelésed 🐩">
+        <div v-if="orders.length">
+          <v-card v-for="order in orders" :key="order.id" class="mb-3 order-card" @click="goToOrder(order.id)">
+            <v-card-title class="justify-space-between">
+              <span>{{ formatCurrency(order.totalPrice) }}</span>
+              <div></div>
+              <small>{{ formatDate(order.creationDate) }}</small>
+            </v-card-title>
+          </v-card>
+        </div>
+
+        <p v-else class="mt-4">Jelenleg nincs rendelésed.</p>
+      </loading-state>
     </div>
 
     <div v-else class="auth-container">
@@ -27,32 +44,82 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 import TheLogin from "@/components/TheLogin.vue";
 import TheRegister from "@/components/TheRegister.vue";
 import TheLogout from "@/components/TheLogout.vue";
+import LoadingState from "@/components/LoadingState.vue";
 
 export default {
   components: {
     TheLogin,
     TheRegister,
     TheLogout,
+    LoadingState,
   },
   data() {
     return {
       authMode: "login",
+      loading: false,
+      notFound: false,
     };
   },
   computed: {
     ...mapState("user", ["user"]),
-    ...mapGetters("user", ["isAuthenticated"]),
+    ...mapGetters("user", ["isAuthenticated", "userOrdersList"]),
+    orders() {
+      return this.userOrdersList;
+    },
+  },
+  methods: {
+    ...mapActions("user", ["fetchUserOrders"]),
+    async loadOrders() {
+      this.loading = true;
+      this.notFound = false;
+      try {
+        await this.fetchUserOrders();
+        this.notFound = !this.userOrdersList.length;
+      } catch (error) {
+        console.error("Error loading orders:", error);
+        this.notFound = true;
+      } finally {
+        this.loading = false;
+      }
+    },
+    formatDate(dateString) {
+      if (!dateString) return "nincs adat";
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      };
+      return new Date(dateString).toLocaleString("hu-HU", options);
+    },
+    formatCurrency(amount) {
+      if (amount === undefined) return "Ismeretlen";
+      return new Intl.NumberFormat("hu-HU", {
+        style: "currency",
+        currency: "HUF",
+        maximumFractionDigits: 0,
+      }).format(amount);
+    },
+    goToOrder(orderId) {
+      this.$router.push(`/order/${orderId}`);
+    },
+  },
+  mounted() {
+    if (this.isAuthenticated) {
+      this.loadOrders();
+    }
   },
 };
 </script>
 
 <style scoped>
 .user-view {
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
 }
 
@@ -69,7 +136,17 @@ export default {
   padding: 20px;
   background: #fafafa;
 }
+
 .auth-container {
   margin-top: 10px;
+}
+
+.order-card {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.order-card:hover {
+  background-color: #f5f5f5;
 }
 </style>

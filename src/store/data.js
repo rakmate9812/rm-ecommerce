@@ -76,6 +76,14 @@ export default {
 
             return filtered;
         },
+
+        getUserOrders: (state) => (uid) => {
+            const orders = state.data.orders?.[uid] || {};
+            return Object.entries(orders).map(([id, value]) => ({
+                id,
+                ...value,
+            }));
+        },
     },
 
     mutations: {

@@ -96,7 +96,7 @@ export default {
       try {
         if (this.selectedProductId) {
           await this.$store.dispatch("data/updateDataInDb", {
-            path: `products/${this.selectedProductId}`,
+            path: `product/${this.selectedProductId}`,
             data: this.product,
           });
         } else {
