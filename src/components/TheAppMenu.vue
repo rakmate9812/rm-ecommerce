@@ -68,11 +68,12 @@ export default {
       console.log("testing:");
       console.log(this.$store.state.user.user);
 
-      //  Hardcoded order ID here 
+      //  Hardcoded order ID and user ID
+      const userId = "";
       const orderId = "";
 
       try {
-        const orderRef = ref(db, `orders/${orderId}`);
+        const orderRef = ref(db, `orders/${userId}/${orderId}`);
         const snapshot = await get(orderRef);
 
         if (snapshot.exists()) {

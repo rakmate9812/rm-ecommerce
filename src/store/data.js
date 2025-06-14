@@ -29,9 +29,7 @@ export default {
             return Object.entries(subcategories || {}).map(([id, value]) => ({
                 id,
                 ...value,
-            })).filter(
-                (sub) => String(sub.id) !== "1"
-            );
+            })).filter((sub) => String(sub.id) !== "1");
         },
 
         productList: (state, getters) => {
@@ -76,14 +74,6 @@ export default {
 
             return filtered;
         },
-
-        getUserOrders: (state) => (uid) => {
-            const orders = state.data.orders?.[uid] || {};
-            return Object.entries(orders).map(([id, value]) => ({
-                id,
-                ...value,
-            }));
-        },
     },
 
     mutations: {
@@ -96,21 +86,24 @@ export default {
         /**
          * General POST method for adding data to any firebase real-time database path
          */
-        async addDataToDb({ commit }, { path, data }) {
+        async addDataToDb({ commit }, { path, data, userId = null }) {
             try {
                 const enrichedData = {
                     ...data,
                     creationDate: new Date().toISOString(),
                 };
-                const reference = ref(db, path);
+
+                let reference;
+                if (path === "orders" && userId) {
+                    reference = ref(db, `${path}/${userId}`);
+                } else {
+                    reference = ref(db, path);
+                }
+
                 const newRef = push(reference);
-
                 await set(newRef, enrichedData);
-                // console.log(`Data added to '${path}' with ID:`, newRef.key);
 
-                // Return the new ID so callers can use it
                 return { id: newRef.key };
-
             } catch (error) {
                 console.error(`Error adding data to '${path}':`, error);
                 // Optionally propagate error if desired

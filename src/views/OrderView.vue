@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { fetchDataFromDatabase } from "@/services/firebaseDbService";
 import LoadingState from "@/components/LoadingState.vue";
 
@@ -109,6 +109,7 @@ export default {
   },
 
   computed: {
+    ...mapState("user", ["user"]),
     ...mapGetters("user", ["isAuthenticated"]),
   },
 
@@ -121,7 +122,7 @@ export default {
     const orderId = this.$route.params.orderId;
 
     try {
-      const data = await fetchDataFromDatabase(`orders/${orderId}`);
+      const data = await fetchDataFromDatabase(`orders/${this.user.uid}/${orderId}`);
 
       if (data) {
         this.order = data;

@@ -12,17 +12,21 @@ export default {
             }
 
             const orderData = {
-                userId: user ? user.uid : null,
+                userId: user.uid,
                 status: "pending",
                 items: cartItems,
                 totalPrice: total,
                 deliveryData,
             };
 
-            // NOTE: addDataToDb must return { id: newRef.key }
+            // Pass userId explicitly to handle nested orders/{userId}
             const { id: orderId } = await dispatch(
                 "data/addDataToDb",
-                { path: "orders", data: orderData },
+                {
+                    path: "orders",
+                    data: orderData,
+                    userId: user.uid, // Pass null if no user, though ideally you'd require auth
+                },
                 { root: true }
             );
 

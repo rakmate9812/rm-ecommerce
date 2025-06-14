@@ -73,12 +73,13 @@ export default {
   },
   methods: {
     ...mapActions("user", ["fetchUserOrders"]),
+
     async loadOrders() {
       this.loading = true;
       this.notFound = false;
       try {
         await this.fetchUserOrders();
-        this.notFound = !this.userOrdersList.length;
+        this.notFound = !this.orders.length;
       } catch (error) {
         console.error("Error loading orders:", error);
         this.notFound = true;
@@ -86,6 +87,7 @@ export default {
         this.loading = false;
       }
     },
+
     formatDate(dateString) {
       if (!dateString) return "nincs adat";
       const options = {
@@ -97,6 +99,7 @@ export default {
       };
       return new Date(dateString).toLocaleString("hu-HU", options);
     },
+
     formatCurrency(amount) {
       if (amount === undefined) return "Ismeretlen";
       return new Intl.NumberFormat("hu-HU", {
@@ -105,10 +108,12 @@ export default {
         maximumFractionDigits: 0,
       }).format(amount);
     },
+
     goToOrder(orderId) {
       this.$router.push(`/order/${orderId}`);
     },
   },
+
   mounted() {
     if (this.isAuthenticated) {
       this.loadOrders();
