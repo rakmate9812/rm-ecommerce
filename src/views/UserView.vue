@@ -1,6 +1,6 @@
 <template>
   <v-container class="user-view" fluid>
-    <h1 class="text-center">Szia!</h1>
+    <h1 class="text-center">Szia {{ user.name }}!</h1>
 
     <div v-if="isAuthenticated">
       <p class="text-center">

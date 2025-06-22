@@ -1,7 +1,7 @@
 <!-- Allows to modify/create products in the db  -->
 <template>
   <div>
-    <h2>Termék módosító</h2>
+    <h1>Termékek kezelése</h1>
 
     <!-- Product selector -->
     <label for="product-select">Válassz egy terméket/vegyél fel újat:</label>
