@@ -1,6 +1,7 @@
 <template>
   <div>
     <TheCategories
+      v-if="!hasSearch"
       :categories="categoryList"
       :selectedCategoryId="selectedCategoryId"
       @categorySelected="onCategorySelected" />
@@ -8,7 +9,7 @@
     <TheSaleItems />
 
     <TheSubcategories
-      v-if="displayedSubcategories.length"
+      v-if="!hasSearch && displayedSubcategories.length"
       :key="subcategoryListKey"
       :subcategories="displayedSubcategories"
       :selectedCategoryId="selectedCategoryId"
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import TheCategories from "@/components/TheCategories.vue";
 import TheSubcategories from "@/components/TheSubCategories.vue";
 import ProductPreviews from "@/components/ProductPreviews.vue";
@@ -48,8 +49,6 @@ export default {
 
   data() {
     return {
-      selectedCategoryId: "1",
-      selectedSubcategoryId: null,
       subcategoryListKey: Math.random(),
       loading: true,
       noProductsFound: false,
@@ -57,6 +56,7 @@ export default {
   },
 
   computed: {
+    ...mapState("data", ["selectedCategoryId", "selectedSubcategoryId"]),
     ...mapGetters("data", [
       "categoryList",
       "subcategoryList",
@@ -65,12 +65,45 @@ export default {
       "filteredProducts",
     ]),
 
+    selectedCategoryId: {
+      get() {
+        return this.$store.state.data.selectedCategoryId;
+      },
+      set(value) {
+        this.$store.commit("data/setSelectedCategoryId", value);
+      },
+    },
+
+    selectedSubcategoryId: {
+      get() {
+        return this.$store.state.data.selectedSubcategoryId;
+      },
+      set(value) {
+        this.$store.commit("data/setSelectedSubcategoryId", value);
+      },
+    },
+
     displayedSubcategories() {
       return this.filteredSubcategories(this.selectedCategoryId);
     },
 
     displayedProducts() {
-      return this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
+      // If global search
+      const search = this.$store.state.data.searchText;
+      if (search) {
+        const lowerSearch = search.toLowerCase();
+        const allProducts = this.filteredProducts(1, null);
+        // console.log(allProducts);
+        return allProducts.filter((product) => product.name.toLowerCase().includes(lowerSearch));
+      }
+
+      // Else category search
+      const displayed = this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
+      return displayed;
+    },
+
+    hasSearch() {
+      return !!this.$store.state.data.searchText;
     },
   },
 

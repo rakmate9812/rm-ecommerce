@@ -34,7 +34,7 @@
                       text-color="white"
                       small
                       class="ml-2">
-                      {{ order.deliveryData.method === "home" ? "Házhoz szállítás" : "Személyes átvétel" }}
+                      {{ order.deliveryData.method === "home" ? "Házhoz szállítás utánvéttel" : "??Valami más??" }}
                     </v-chip>
                   </v-list-item-title>
                 </v-list-item>

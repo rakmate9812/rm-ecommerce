@@ -4,22 +4,23 @@
       <v-row align="center" justify="space-between">
         <v-col cols="2">
           <!-- Logo that emits event to parent (App.vue) -->
-          <img src="@/assets/logo.png" @click="$emit('logoClick')" alt="Logo" class="logo-icon" />
+          <img src="@/assets/logo.png" @click="logo" alt="Logo" class="logo-icon" />
         </v-col>
 
         <v-col>
           <v-row class="search-row ml-8">
             <v-text-field
               v-model="searchText"
-              @click:append-inner="loadData"
-              @keyup.enter="loadData"
+              @click:append-inner="loadSearchData"
+              @keyup.enter="loadSearchData"
               append-inner-icon="mdi-magnify"
               variant="solo"
               density="compact"
               single-line
               hide-details
               placeholder="Keresés"
-              clearable />
+              clearable
+              @click:clear="clearSearch" />
           </v-row>
         </v-col>
 
@@ -87,10 +88,20 @@ export default {
       }
     },
 
-    loadData() {
-      alert(this.searchText);
+    logo() {
+      this.$emit("logoClick"); // used on App.vue
+      this.clearSearch();
+    },
+
+    loadSearchData() {
+      this.$store.state.data.searchText = this.searchText;
+    },
+
+    clearSearch() {
+      this.searchText = this.$store.state.data.searchText = null;
     },
   },
+
   computed: {
     isAdmin() {
       return this.$store.getters["user/isAdmin"];

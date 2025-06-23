@@ -9,6 +9,10 @@ export default {
     state: {
         // The data object gets filled with the firebase real-time database JSON structured data (within the fetchData fn)
         data: {},
+        searchText: "",
+
+        selectedCategoryId: "1",
+        selectedSubcategoryId: null,
     },
 
     getters: {
@@ -82,6 +86,13 @@ export default {
     mutations: {
         setData(state, { path, data }) {
             state.data[path] = data;
+        },
+
+        setSelectedCategoryId(state, categoryId) {
+            state.selectedCategoryId = categoryId;
+        },
+        setSelectedSubcategoryId(state, subcategoryId) {
+            state.selectedSubcategoryId = subcategoryId;
         },
     },
 

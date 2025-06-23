@@ -46,6 +46,10 @@ export default {
     },
   },
 
+  mounted() {
+    window.scrollTo(0, 0)
+  },
+
   methods: {
     handleToggleFavorite(productId) {
       this.$store.dispatch("favorites/toggleFavorite", productId);
