@@ -104,7 +104,7 @@ export default {
         },
 
         cartItemsDetailed(state, getters, rootState, rootGetters) {
-            const products = rootGetters["data/productList"] || [];
+            const products = rootGetters["data/activeProductList"] || [];
             return state.cartItems.map(cartItem => {
                 const product = products.find(p => p.id === cartItem.productId);
                 return {

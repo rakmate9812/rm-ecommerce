@@ -113,12 +113,14 @@ export default {
 
   methods: {
     checkProduct() {
-      const products = this.$store.getters["data/getData"]("products");
+      const activeProducts = this.$store.getters["data/activeProductList"];
 
       // If products not loaded yet, wait for watcher to trigger this function when smtg comes
-      if (!Object.keys(products).length) return;
+      if (!Object.keys(activeProducts).length) return;
 
-      this.product = products[this.$route.params.productId];
+      this.product = activeProducts.find((prod) => this.$route.params.productId == prod.id);
+
+      // console.log(this.product);
 
       if (this.product) {
         const category = this.$store.getters["data/categoryList"].find(

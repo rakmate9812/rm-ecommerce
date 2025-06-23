@@ -8,13 +8,20 @@
     <select v-model="selectedProductId" @change="loadProduct">
       <option value="">Új termék</option>
       <option v-for="(product, id) in products" :key="id" :value="id">
-        {{ product.name || `Product ID: ${id}` }}
+        {{ product.name }}
       </option>
     </select>
 
     <form @submit.prevent="submitProduct">
+      <label>{{ selectedProductId ? "UID: " + selectedProductId : "" }}</label>
+
       <input v-model="product.name" placeholder="Product Name" required />
       <input v-model.number="product.price" type="number" placeholder="Price" required />
+
+      <label>
+        <input type="checkbox" v-model="product.active" />
+        Aktív
+      </label>
 
       <!-- Category selector -->
       <select v-model="product.categoryId" required>
@@ -81,6 +88,7 @@ export default {
         subcategoryId: "",
         description: "",
         imageUrl: "",
+        active: true,
       };
     },
 
@@ -96,7 +104,7 @@ export default {
       try {
         if (this.selectedProductId) {
           await this.$store.dispatch("data/updateDataInDb", {
-            path: `product/${this.selectedProductId}`,
+            path: `products/${this.selectedProductId}`,
             data: this.product,
           });
         } else {
@@ -106,10 +114,12 @@ export default {
           });
         }
         alert(`Product ${this.selectedProductId ? "updated" : "added"} successfully!`);
+
         await this.$store.dispatch("data/fetchData", "products");
         this.resetForm();
       } catch (error) {
         console.error("Error saving product:", error);
+        alert(`Hiba történt, művelet sikertelen!`);
       }
     },
 

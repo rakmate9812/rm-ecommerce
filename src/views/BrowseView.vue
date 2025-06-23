@@ -60,7 +60,7 @@ export default {
     ...mapGetters("data", [
       "categoryList",
       "subcategoryList",
-      "productList",
+      "activeProductList",
       "filteredSubcategories",
       "filteredProducts",
     ]),
@@ -89,7 +89,7 @@ export default {
 
     evaluateProductState() {
       // Only call this if data is already loaded
-      if (!Object.keys(this.productList).length) return; // The watcher will call this again if data came
+      if (!Object.keys(this.activeProductList).length) return; // The watcher will call this again if data came
 
       this.noProductsFound = !this.displayedProducts.length;
       this.loading = false;
@@ -98,7 +98,7 @@ export default {
 
   watch: {
     // Watch for when products data arrives from fb
-    productList: {
+    activeProductList: {
       handler() {
         this.evaluateProductState();
       },

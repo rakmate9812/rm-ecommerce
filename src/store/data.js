@@ -32,13 +32,16 @@ export default {
             })).filter((sub) => String(sub.id) !== "1");
         },
 
-        productList: (state, getters) => {
+        activeProductList: (state, getters) => {
             const products = getters.getData("products");
-            return Object.entries(products || {}).map(([id, value]) => ({
-                id,
-                ...value,
-            }));
+            return Object.entries(products || {})
+                .map(([id, value]) => ({
+                    id,
+                    ...value,
+                }))
+                .filter((prod) => prod.active !== false); // show only if active is true or undefined
         },
+
 
         // Filter subcategories by selectedCategoryId
         filteredSubcategories: (state, getters) => (selectedCategoryId) => {
@@ -55,14 +58,14 @@ export default {
             if (String(selectedCategoryId) === "1") {
                 // Category 1 selected - show all if no subcategory, else filter by subcategory
                 return selectedSubcategoryId
-                    ? getters.productList.filter(
+                    ? getters.activeProductList.filter(
                         (prod) => String(prod.subcategoryId) === String(selectedSubcategoryId)
                     )
-                    : getters.productList;
+                    : getters.activeProductList;
             }
 
             // Else - filter by categoryId (and subcategory if selected)
-            let filtered = getters.productList.filter(
+            let filtered = getters.activeProductList.filter(
                 (prod) => String(prod.categoryId) === String(selectedCategoryId)
             );
 
@@ -134,6 +137,7 @@ export default {
                 console.log(`Data updated at '${path}'`);
             } catch (error) {
                 console.error(`Error updating data at '${path}':`, error);
+                throw error;
             }
         },
 

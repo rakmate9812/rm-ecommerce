@@ -35,14 +35,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters("data", ["productList"]),
+    ...mapGetters("data", ["activeProductList"]),
     favorites() {
       return this.$store.state.favorites.favorites || [];
     },
 
     favoriteProducts() {
       // Filter products to only those favorited by user
-      return this.productList.filter((product) => this.favorites.includes(product.id));
+      return this.activeProductList.filter((product) => this.favorites.includes(product.id));
     },
   },
 
@@ -58,7 +58,7 @@ export default {
   },
 
   watch: {
-    productList: {
+    activeProductList: {
       immediate: true,
       handler() {
         this.evaluateProductState();

@@ -144,8 +144,8 @@ export default {
       return this.$store.getters["data/getData"]("users") || {};
     },
 
-    productList() {
-      return this.$store.getters["data/productList"];
+    activeProductList() {
+      return this.$store.getters["data/activeProductList"];
     },
   },
 
@@ -168,20 +168,21 @@ export default {
     async fetchNode() {
       if (!this.selectedPath || this.selectedPath === "carts" || this.selectedPath === "favorites") return;
       await this.$store.dispatch("data/fetchData", this.selectedPath);
-      console.log(this.data);
+      // console.log(this.data);
     },
 
     getUserInfo(uid) {
       const user = this.users[uid];
-      return user ? `${user.email} - ${user.name}` : "anonim";
+      return user ? `${user.email} - ${user.name}` : "anonim"; // Bc only anonim/logged in users can put anything in cart this is a shortcut
     },
 
     getCartItems(cart) {
       if (!cart) return "";
       const items = [];
+
       Object.values(cart).forEach((entry) => {
         if (entry.productId && entry.quantity) {
-          const product = this.productList.find((prod) => entry.productId == prod.id);
+          const product = this.activeProductList.find((prod) => entry.productId == prod.id);
           items.push(`${product?.name || entry.productId} x ${entry.quantity}`);
         }
       });
