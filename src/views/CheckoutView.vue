@@ -17,9 +17,9 @@
           <v-text-field v-model="deliveryData.phone" label="Telefonszám" required />
           <v-text-field v-model="deliveryData.address" label="Cím" required />
 
-          <v-radio-group v-model="deliveryData.method" label="Szállítás módja" required>
-            <v-radio label="Házhoz szállítás" value="home" />
-            <v-radio label="Személyes átvétel" disabled value="pickup" />
+          <v-radio-group v-model="deliveryData.method" label="Szállítás és fizetés módja" required>
+            <v-radio label="Házhoz szállítás utánvéttel" value="home" />
+            <v-radio label="Online fizetés (hamarosan)" disabled value="online" />
           </v-radio-group>
 
           <v-btn color="primary" @click="openConfirmModal" prepend-icon="mdi-cart-check"> Megrendelés </v-btn>

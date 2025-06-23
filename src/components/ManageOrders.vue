@@ -29,12 +29,12 @@
           <tr
             v-for="order in paginatedOrders[currentPage] || []"
             :key="order.orderId"
-            @click="goToOrder(order.orderId)"
+            @click="goToOrder(order.userId, order.orderId)"
             style="cursor: pointer">
             <td>{{ order.orderId }}</td>
             <td>{{ getUserInfo(order.userId) }}</td>
             <td>{{ formatDate(order.creationDate) || "-" }}</td>
-            <td>{{ order.status || "-" }}</td>
+            <td :class="colorStatusBackground(order.status)">{{ order.status || "-" }}</td>
             <td>{{ order.totalPrice }} Ft</td>
           </tr>
         </tbody>
@@ -109,8 +109,8 @@ export default {
       return user ? `${user.email} - ${uid}` : `anonim - ${uid}`;
     },
 
-    goToOrder(orderId) {
-      this.$router.push(`/admin/${orderId}`);
+    goToOrder(userId, orderId) {
+      this.$router.push(`/admin/${userId}/${orderId}`);
     },
 
     formatDate(datetime) {
@@ -123,6 +123,13 @@ export default {
         // ":" +
         // d.getSeconds()
       );
+    },
+
+    colorStatusBackground(orderStatus) {
+      if (orderStatus === "pending") return "yellow-bg";
+      if (orderStatus === "in progress") return "blue-bg";
+      if (orderStatus === "completed") return "green-bg";
+      return "";
     },
   },
 };
@@ -158,5 +165,17 @@ th {
 .pagination button.active {
   background: #333;
   color: #fff;
+}
+
+.yellow-bg {
+  background-color: yellow;
+}
+
+.blue-bg {
+  background-color: aqua;
+}
+
+.green-bg {
+  background-color: green;
 }
 </style>
