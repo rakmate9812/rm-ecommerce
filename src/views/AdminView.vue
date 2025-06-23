@@ -1,11 +1,17 @@
 <template>
   <div>
     <!-- Buttons to switch views -->
-    <v-btn @click="activeView = 'items'" color="primary" class="ma-2">Adatbázis nézegető</v-btn>
-    <v-btn @click="activeView = 'productForm'" color="primary" class="ma-2">Termékek kezelése</v-btn>
-    <v-btn @click="activeView = 'orders'" color="primary" class="ma-2">Megrendelések kezelése</v-btn>
+    <v-btn class="ma-2" @click="$router.push({ path: '/admin', query: { view: 'items' } })" color="primary"
+      >Adatbázis nézegető</v-btn
+    >
+    <v-btn class="ma-2" @click="$router.push({ path: '/admin', query: { view: 'productForm' } })" color="primary"
+      >Termékek kezelése</v-btn
+    >
+    <v-btn class="ma-2" @click="$router.push({ path: '/admin', query: { view: 'orders' } })" color="primary"
+      >Megrendelések kezelése</v-btn
+    >
 
-    <v-btn @click="testing" color="primary" class="ma-2">Tesztgomb</v-btn>
+    <v-btn v-if="test" @click="testing" color="primary" class="ma-2">Tesztgomb</v-btn>
     <v-container class="separator-line" fluid></v-container>
 
     <!-- Conditional component display -->
@@ -28,13 +34,21 @@ export default {
   },
   data() {
     return {
-      activeView: "items", // default view
+      activeView: this.$route.query.view || "items", // When clicking back on browser, the state is preserved on the previous component
+
+      test: false,
     };
   },
 
   methods: {
     testing() {
-      console.log(this.$store.state.data.data.users);
+      // console.log(this.$store.state.data.data.users);
+    },
+  },
+
+  watch: {
+    "$route.query.view"(newVal) {
+      this.activeView = newVal || "items"; // updating the route on changing the components
     },
   },
 };
