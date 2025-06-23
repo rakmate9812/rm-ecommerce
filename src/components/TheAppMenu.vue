@@ -95,10 +95,12 @@ export default {
 
     loadSearchData() {
       this.$store.state.data.searchText = this.searchText;
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
 
     clearSearch() {
       this.searchText = this.$store.state.data.searchText = null;
+      window.scrollTo({ top: 0, behavior: "smooth" });
     },
   },
 
