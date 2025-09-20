@@ -1,33 +1,37 @@
 <template>
   <div>
-    <!-- Categories -->
-    <TheCategories
-      v-if="!hasSearch"
-      :categories="categoryList"
-      :selectedCategoryId="selectedCategoryId"
-      @categorySelected="onCategorySelected"
-      class="categories-scroll" />
+    <!-- Categories & Subcategories (desktop only) -->
+    <div class="desktop-only">
+      <TheCategories
+        v-if="!hasSearch"
+        :categories="categoryList"
+        :selectedCategoryId="selectedCategoryId"
+        @categorySelected="onCategorySelected"
+        class="categories-scroll" />
+
+      <TheSubcategories
+        v-if="!hasSearch && displayedSubcategories.length"
+        :key="subcategoryListKey"
+        :subcategories="displayedSubcategories"
+        :selectedCategoryId="selectedCategoryId"
+        @subcategorySelected="onSubcategorySelected"
+        class="subcategories-scroll" />
+    </div>
 
     <TheSaleItems />
 
-    <!-- Subcategories -->
-    <TheSubcategories
-      v-if="!hasSearch && displayedSubcategories.length"
-      :key="subcategoryListKey"
-      :subcategories="displayedSubcategories"
-      :selectedCategoryId="selectedCategoryId"
-      @subcategorySelected="onSubcategorySelected"
-      class="subcategories-scroll" />
-
     <v-container class="separator-line" fluid></v-container>
 
+    <!-- Show current category name -->
+    <h2 v-if="currentCategoryName" class="mt-2 mb-2">{{ currentCategoryName }}</h2>
+
+    <!-- Products title -->
     <h2 v-if="!noProductsFound" class="mt-2 mb-4">Termékek</h2>
 
     <loading-state
       :loading="loading"
       :not-found="noProductsFound"
       error-text="Nem találhatóak termékek ebben a kategóriában.">
-      <!-- Products -->
       <div class="product-grid">
         <ProductPreviews :filteredProducts="displayedProducts" />
       </div>
@@ -71,77 +75,61 @@ export default {
       "filteredProducts",
     ]),
 
-    selectedCategoryId: {
-      get() {
-        return this.$store.state.data.selectedCategoryId;
-      },
-      set(value) {
-        this.$store.commit("data/setSelectedCategoryId", value);
-      },
-    },
-
-    selectedSubcategoryId: {
-      get() {
-        return this.$store.state.data.selectedSubcategoryId;
-      },
-      set(value) {
-        this.$store.commit("data/setSelectedSubcategoryId", value);
-      },
-    },
-
     displayedSubcategories() {
       return this.filteredSubcategories(this.selectedCategoryId);
     },
 
     displayedProducts() {
-      // If global search
       const search = this.$store.state.data.searchText;
       if (search) {
         const lowerSearch = search.toLowerCase();
         const allProducts = this.filteredProducts(1, null);
-        // console.log(allProducts);
         return allProducts.filter((product) => product.name.toLowerCase().includes(lowerSearch));
       }
-
-      // Else category search
-      const displayed = this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
-      return displayed;
+      return this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
     },
 
     hasSearch() {
       return !!this.$store.state.data.searchText;
     },
+
+    currentCategoryName() {
+      const found = this.categoryList.find((c) => String(c.id) === String(this.selectedCategoryId));
+      return found ? found.name : null;
+    },
   },
 
   methods: {
     onCategorySelected(categoryId) {
-      this.selectedCategoryId = categoryId;
-      this.selectedSubcategoryId = null;
+      this.$store.commit("data/setSelectedCategoryId", categoryId);
+      this.$store.commit("data/setSelectedSubcategoryId", null);
       this.subcategoryListKey = Math.random();
+      this.loading = true;
       this.evaluateProductState();
     },
 
     onSubcategorySelected(subcategoryId) {
-      this.selectedSubcategoryId = subcategoryId;
+      this.$store.commit("data/setSelectedSubcategoryId", subcategoryId);
+      this.loading = true;
       this.evaluateProductState();
     },
 
     evaluateProductState() {
-      // Only call this if data is already loaded
-      if (!Object.keys(this.activeProductList).length) return; // The watcher will call this again if data came
-
+      if (!Object.keys(this.activeProductList).length) return;
       this.noProductsFound = !this.displayedProducts.length;
       this.loading = false;
     },
   },
 
   watch: {
-    // Watch for when products data arrives from fb
     activeProductList: {
       handler() {
         this.evaluateProductState();
       },
       immediate: true,
+    },
+    displayedProducts() {
+      this.evaluateProductState();
     },
   },
 };
@@ -150,5 +138,12 @@ export default {
 <style scoped>
 .separator-line {
   background-color: #f5f5f5;
+}
+
+/* Hide categories + subcategories on mobile */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
 }
 </style>

@@ -1,45 +1,49 @@
 <template>
-  <v-container class="py-8">
+  <v-container class="py-6">
     <loading-state
       :loading="loading"
       :not-found="productNotFound"
       error-text="A termék nem található vagy eltávolították."
       :icon="true"
       :home-button="true">
-      <v-card class="mt-6 pa-6 rounded-xl" elevation="3">
-        <v-row>
-          <!-- Image -->
-          <v-col cols="12" md="5">
-            <v-img :src="product.imageUrl || logoImage" height="400px" cover class="rounded-lg"></v-img>
+      <v-card class="mt-4 pa-4 pa-md-6 rounded-xl" elevation="3">
+        <v-row class="product-row" align="start">
+          <!-- IMAGE -->
+          <v-col cols="12" md="5" class="mb-4 mb-md-0">
+            <div class="image-wrapper">
+              <v-img :src="product.imageUrl || logoImage" class="product-image" contain></v-img>
+            </div>
           </v-col>
 
-          <!-- Details -->
+          <!-- DETAILS -->
           <v-col cols="12" md="7">
-            <h1 class="text-h4 font-weight-bold mb-4">{{ product.name }}</h1>
+            <h1 class="product-title text-h5 text-md-h4 font-weight-bold mb-3">
+              {{ product.name }}
+            </h1>
             <v-divider class="mb-4"></v-divider>
 
             <v-row>
               <!-- LEFT: price, category, subcategory -->
-              <v-col cols="12" md="5">
-                <div class="mb-6">
-                  <h3 class="font-weight-medium">Ár</h3>
-                  <p class="text-h4 font-weight-bold" style="color: rgba(67, 127, 127)">{{ product.price }} Ft</p>
+              <v-col cols="12" md="5" class="mb-3 mb-md-0">
+                <div class="mb-4">
+                  <h3 class="section-heading">Ár</h3>
+                  <p class="price-text">{{ product.price }} Ft</p>
                 </div>
 
-                <div class="mb-4">
-                  <h3 class="font-weight-medium">Kategória</h3>
+                <div class="mb-3">
+                  <h3 class="section-heading">Kategória</h3>
                   <p>{{ categoryName || "-" }}</p>
                 </div>
 
-                <div class="mb-4">
-                  <h3 class="font-weight-medium">Alkategória</h3>
+                <div>
+                  <h3 class="section-heading">Alkategória</h3>
                   <p>{{ subcategoryName || "-" }}</p>
                 </div>
               </v-col>
 
               <!-- RIGHT: description -->
               <v-col cols="12" md="7">
-                <h3 class="font-weight-medium mb-2">Leírás</h3>
+                <h3 class="section-heading mb-2">Leírás</h3>
                 <div class="description-container">
                   <p class="description text-body-1">
                     {{ product.description || "Nincs leírás megadva." }}
@@ -48,16 +52,13 @@
               </v-col>
             </v-row>
 
-            <!-- Actions centered under the details -->
-            <div class="d-flex justify-center flex-wrap ga-4 mt-6">
-              <!-- <v-btn color="primary" variant="elevated" @click="addToCart">
-                <v-icon start>mdi-cart</v-icon> Kosárba
-              </v-btn> -->
-
+            <!-- ACTIONS -->
+            <div class="action-buttons d-flex flex-column flex-sm-row justify-center ga-3 mt-6">
               <RateLimitedButton
                 :color="isAddedToCart ? 'primary' : 'secondary'"
                 variant="elevated"
                 :debounceTime="1000"
+                class="flex-grow-1"
                 @rlb-click="toggleToCart">
                 <v-icon start>
                   {{ isAddedToCart ? "mdi-cart" : "mdi-cart-outline" }}
@@ -69,6 +70,7 @@
                 :color="isFavorited ? 'pink' : 'grey'"
                 variant="outlined"
                 :debounceTime="1000"
+                class="flex-grow-1"
                 @rlb-click="toggleToFavorites">
                 <v-icon start>
                   {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
@@ -86,7 +88,7 @@
 <script>
 import { mapGetters } from "vuex";
 import logoImage from "@/assets/logo-smaller.png";
-import LoadingState from "@/components/LoadingState.vue"; // wherever you place it
+import LoadingState from "@/components/LoadingState.vue";
 import RateLimitedButton from "@/components/RateLimitedButton.vue";
 
 export default {
@@ -94,6 +96,7 @@ export default {
     LoadingState,
     RateLimitedButton,
   },
+
   data() {
     return {
       product: null,
@@ -101,7 +104,6 @@ export default {
       subcategoryName: null,
       logoImage,
 
-      // for loading state
       productNotFound: false,
       loading: true,
     };
@@ -114,13 +116,9 @@ export default {
   methods: {
     checkProduct() {
       const activeProducts = this.$store.getters["data/activeProductList"];
-
-      // If products not loaded yet, wait for watcher to trigger this function when smtg comes
       if (!Object.keys(activeProducts).length) return;
 
       this.product = activeProducts.find((prod) => this.$route.params.productId == prod.id);
-
-      // console.log(this.product);
 
       if (this.product) {
         const category = this.$store.getters["data/categoryList"].find(
@@ -138,7 +136,7 @@ export default {
         this.productNotFound = true;
       }
 
-      this.loading = false; // stop loading state
+      this.loading = false;
     },
 
     toggleToCart() {
@@ -185,27 +183,67 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  line-height: 1.2;
+.product-title {
+  line-height: 1.3;
 }
 
+.section-heading {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.price-text {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: rgba(67, 127, 127);
+}
+
+/* IMAGE WRAPPER */
+.image-wrapper {
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Description scroll */
 .description-container {
   max-height: 220px;
   overflow-y: auto;
   padding-right: 6px;
   white-space: pre-line;
 }
-
 .description-container::-webkit-scrollbar {
   width: 6px;
 }
-
 .description-container::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 
-.description {
-  white-space: pre-line;
+/* ACTION BUTTONS FLEX */
+.action-buttons > .v-btn {
+  margin-bottom: 0.5rem;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .product-title {
+    font-size: 1.3rem;
+  }
+
+  .price-text {
+    font-size: 1.2rem;
+  }
+
+  .action-buttons {
+    flex-direction: column !important;
+  }
 }
 </style>

@@ -2,9 +2,11 @@
   <v-container fluid>
     <v-row>
       <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
-        <v-card class="rounded-xl" elevation="3" @click="viewDetails(product.id)">
+        <v-card class="product-card" elevation="3" @click="viewDetails(product.id)">
           <div class="image-container">
-            <v-img :src="product.imageUrl || logoImage" class="logo-image" cover></v-img>
+            <div class="image-wrapper">
+              <v-img :src="product.imageUrl || logoImage" class="product-image" cover></v-img>
+            </div>
 
             <v-btn
               v-if="showFavorites"
@@ -20,24 +22,24 @@
             </v-btn>
           </div>
 
-          <v-card-title class="text-truncate">{{ product.name }}</v-card-title>
+          <v-card-title class="text-truncate product-title">
+            {{ product.name }}
+          </v-card-title>
 
-          <v-card-subtitle class="text-grey">
+          <v-card-subtitle class="text-grey product-subtitle">
             {{ product.shortDescription || "-" }}
           </v-card-subtitle>
 
           <v-card-text>
-            <strong>{{ product.price }} Ft</strong>
+            <strong class="product-price">{{ product.price }} Ft</strong>
           </v-card-text>
 
-          <!-- Yeah, this is pretty f'd up :D -->
-          <!-- We need click.stop to prevent the default card clicking event (which is to open the product view) -->
-          <!-- rlb click event is to prevent double clicking (this is actually the RateLimitedButton's problem) -->
           <div @click.stop>
             <v-card-actions class="button-actions">
               <RateLimitedButton
                 :color="isAddedToCart(product.id) ? 'primary' : 'secondary'"
-                variant="plain"
+                variant="elevated"
+                block
                 :debounceTime="1000"
                 @rlb-click="() => toggleToCart(product.id)">
                 <v-icon start>
@@ -130,8 +132,13 @@ export default {
 </script>
 
 <style scoped>
-.v-card-title {
-  font-size: 1.1rem;
+.product-card {
+  border-radius: 14px;
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
 }
 
 .image-container {
@@ -139,7 +146,7 @@ export default {
 }
 
 .logo-image {
-  height: 23em;
+  height: 20em;
   border-radius: 0.75rem;
 }
 
@@ -152,14 +159,62 @@ export default {
   backdrop-filter: blur(2px);
 }
 
+.product-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.product-subtitle {
+  font-size: 0.85rem;
+  min-height: 2em;
+}
+
+.product-price {
+  color: rgba(67, 127, 127);
+  font-size: 1rem;
+  font-weight: bold;
+}
+
 .button-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0.5em;
-  gap: 0.5em;
 }
 
 .button-actions .v-btn {
   flex: 1;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .logo-image {
+    height: 14em; /* shorter image */
+  }
+
+  .product-card {
+    margin-bottom: 12px;
+  }
+
+  .button-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .button-actions .v-btn {
+    width: 100%; /* full width buttons */
+  }
+}
+
+.image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 4; /* all images same ratio (portrait-like) */
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* keeps proportions */
 }
 </style>

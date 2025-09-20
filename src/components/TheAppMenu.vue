@@ -41,23 +41,15 @@
             <v-icon left class="me-2">mdi-cog</v-icon>
             Admin
           </v-btn>
-          <v-btn v-if="testing" class="nav-button my-2" variant="text" @click="test">
-            <v-icon left class="me-2">mdi-wrench</v-icon>
-            Teszt
-          </v-btn>
         </v-col>
       </v-row>
 
       <!-- mobile bar -->
       <div class="mobile-bar">
-        <v-btn icon dense @click="drawer = true">
-          <v-icon>mdi-menu</v-icon>
-        </v-btn>
-
-        <img src="@/assets/logo.png" @click="logo" alt="Logo" class="logo-icon mobile-logo" />
+        <img src="@/assets/logo.png" @click="logoMobile" alt="Logo" class="logo-icon mobile-logo" />
 
         <div class="mobile-actions">
-          <v-btn icon dense @click="showMobileSearch = true">
+          <v-btn icon dense @click="toggleMobileSearch">
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
           <v-btn icon dense to="/favourites">
@@ -66,12 +58,15 @@
           <v-btn icon dense to="/cart">
             <v-icon>mdi-cart</v-icon>
           </v-btn>
+          <v-btn icon dense @click="drawer = true">
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
         </div>
       </div>
 
       <!-- mobile search -->
       <v-row v-if="showMobileSearch" class="mobile-search-row" align="center">
-        <v-col cols="11" class="px-0">
+        <v-col cols="12" class="px-0">
           <v-text-field
             v-model="searchText"
             @keyup.enter="onMobileSearchEnter"
@@ -82,40 +77,30 @@
             hide-details
             placeholder="Keresés"
             clearable
-            @click:clear="clearSearch"
+            @click:clear="clearSearchMobile"
             autofocus />
-        </v-col>
-        <v-col cols="1" class="px-0">
-          <v-btn icon dense @click="showMobileSearch = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
         </v-col>
       </v-row>
     </v-container>
 
     <!-- mobile drawer replacement -->
     <v-overlay v-model="drawer" absolute class="mobile-drawer">
-      <div class="drawer-content">
-        <img src="@/assets/logo.png" alt="Logo" class="drawer-logo" />
+      <div class="drawer-content right-drawer">
+        <img src="@/assets/logo.png" alt="Logo" @click="logoMobile" class="drawer-logo" />
 
         <v-list>
-          <v-list-item link to="/user" @click="drawer = false">
-            <v-icon class="me-2">mdi-account</v-icon> Fiók
-          </v-list-item>
-
-          <v-list-item link to="/favourites" @click="drawer = false">
-            <v-icon class="me-2">mdi-heart</v-icon> Későbbre mentve
-          </v-list-item>
-
-          <v-list-item link to="/cart" @click="drawer = false">
-            <v-icon class="me-2">mdi-cart</v-icon> Bevásárlókocsi
-          </v-list-item>
-
-          <v-list-item v-if="isAdmin" link to="/admin" @click="drawer = false">
-            <v-icon class="me-2">mdi-cog</v-icon> Admin
-          </v-list-item>
-
-          <v-list-item v-if="testing" @click="test"> <v-icon class="me-2">mdi-wrench</v-icon> Teszt </v-list-item>
+          <v-list-group
+            v-for="category in categoryList"
+            :key="category.id"
+            :value="expandedCategoryId === category.id"
+            @click="selectCategoryMobile(category.id)"
+            no-action>
+            <template #activator>
+              <v-list-item-title :class="{ 'active-category': selectedCategoryId === category.id }">
+                {{ category.name }}
+              </v-list-item-title>
+            </template>
+          </v-list-group>
         </v-list>
       </div>
     </v-overlay>
@@ -123,60 +108,78 @@
 </template>
 
 <script>
-import { ref, get } from "firebase/database";
-import db from "@/firebaseConfig";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   data() {
     return {
       searchText: null,
-      testing: false,
       drawer: false,
       showMobileSearch: false,
+      expandedCategoryId: null,
     };
   },
+
+  computed: {
+    ...mapState("data", ["selectedCategoryId", "selectedSubcategoryId"]),
+    ...mapGetters("data", ["categoryList", "filteredSubcategories"]),
+
+    isAdmin() {
+      return this.$store.getters["user/isAdmin"];
+    },
+  },
+
   methods: {
-    async test() {
-      console.log("testing:");
-      console.log(this.$store.state.user.user);
-
-      const userId = "";
-      const orderId = "";
-
-      try {
-        const orderRef = ref(db, `orders/${userId}/${orderId}`);
-        const snapshot = await get(orderRef);
-
-        if (snapshot.exists()) {
-          console.log(`Order (${orderId}):`, snapshot.val());
-        } else {
-          console.log(`Order with ID '${orderId}' not found.`);
-        }
-      } catch (error) {
-        console.error("Error fetching order:", error);
+    toggleMobileSearch() {
+      if (!this.showMobileSearch) {
+        this.searchText = null;
+        this.showMobileSearch = true;
+      } else {
+        this.clearSearchMobile();
+        this.showMobileSearch = false;
       }
     },
+
+    selectCategoryMobile(categoryId) {
+      this.clearSearchMobile();
+      this.showMobileSearch = false;
+      this.expandedCategoryId = this.expandedCategoryId === categoryId ? null : categoryId;
+      this.$store.commit("data/setSelectedCategoryId", categoryId);
+      this.$store.commit("data/setSelectedSubcategoryId", null);
+      this.drawer = false;
+    },
+
     logo() {
       this.$emit("logoClick");
       this.clearSearch();
     },
+
+    logoMobile() {
+      this.logo();
+      this.showMobileSearch = false;
+      this.clearSearch();
+      if (this.drawer) {
+        this.drawer = false;
+      }
+    },
+
     loadSearchData() {
       this.$store.state.data.searchText = this.searchText;
-      this.showMobileSearch = false;
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
+
     onMobileSearchEnter() {
       this.loadSearchData();
     },
+
     clearSearch() {
       this.searchText = this.$store.state.data.searchText = null;
-      this.showMobileSearch = false;
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-  },
-  computed: {
-    isAdmin() {
-      return this.$store.getters["user/isAdmin"];
+
+    clearSearchMobile() {
+      this.clearSearch();
+      this.showMobileSearch = true;
     },
   },
 };
@@ -208,6 +211,12 @@ export default {
   color: rgb(65, 20, 0);
 }
 
+/* active category style */
+.active-category {
+  font-weight: bold;
+  color: rgba(67, 127, 127);
+}
+
 /* mobile */
 .mobile-bar {
   display: none;
@@ -221,7 +230,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    border-bottom: 1px solid #eee;
   }
   .logo-icon.mobile-logo {
     width: 6rem;
@@ -240,13 +248,14 @@ export default {
   /* drawer overlay */
   .mobile-drawer {
     background-color: rgba(0, 0, 0, 0.4);
+    justify-content: flex-end;
   }
-  .drawer-content {
+  .drawer-content.right-drawer {
     background: white;
     width: 250px;
     height: 100%;
     padding: 16px;
-    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+    box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
   }
   .drawer-logo {
     width: 8rem;
