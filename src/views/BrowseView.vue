@@ -1,30 +1,36 @@
 <template>
   <div>
+    <!-- Categories -->
     <TheCategories
       v-if="!hasSearch"
       :categories="categoryList"
       :selectedCategoryId="selectedCategoryId"
-      @categorySelected="onCategorySelected" />
+      @categorySelected="onCategorySelected"
+      class="categories-scroll" />
 
     <TheSaleItems />
 
+    <!-- Subcategories -->
     <TheSubcategories
       v-if="!hasSearch && displayedSubcategories.length"
       :key="subcategoryListKey"
       :subcategories="displayedSubcategories"
       :selectedCategoryId="selectedCategoryId"
-      @subcategorySelected="onSubcategorySelected" />
+      @subcategorySelected="onSubcategorySelected"
+      class="subcategories-scroll" />
 
     <v-container class="separator-line" fluid></v-container>
 
     <h2 v-if="!noProductsFound" class="mt-2 mb-4">Termékek</h2>
 
-    <!-- Product area with loading state -->
     <loading-state
       :loading="loading"
       :not-found="noProductsFound"
       error-text="Nem találhatóak termékek ebben a kategóriában.">
-      <ProductPreviews :filteredProducts="displayedProducts" />
+      <!-- Products -->
+      <div class="product-grid">
+        <ProductPreviews :filteredProducts="displayedProducts" />
+      </div>
     </loading-state>
   </div>
 </template>
