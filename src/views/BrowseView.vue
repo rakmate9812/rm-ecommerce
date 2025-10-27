@@ -20,7 +20,7 @@
 
     <TheSaleItems />
 
-    <v-container class="separator-line" fluid>
+    <v-container v-if="!hasSearch" class="separator-line" fluid>
       <!-- Show current category name -->
       <h2 v-if="currentCategoryName" class="mt-2 mb-2">{{ currentCategoryName }}</h2>
     </v-container>
@@ -28,10 +28,7 @@
     <!-- Products title -->
     <h2 v-if="!noProductsFound" class="mt-2 mb-4">Termékek</h2>
 
-    <loading-state
-      :loading="loading"
-      :not-found="noProductsFound"
-      error-text="Nem találhatóak termékek ebben a kategóriában.">
+    <loading-state :loading="loading" :not-found="noProductsFound" :error-text="errorText">
       <div class="product-grid">
         <ProductPreviews :filteredProducts="displayedProducts" />
       </div>
@@ -62,6 +59,7 @@ export default {
       subcategoryListKey: Math.random(),
       loading: true,
       noProductsFound: false,
+      errorText: "Nem található termék.",
     };
   },
 
@@ -80,11 +78,11 @@ export default {
     },
 
     displayedProducts() {
-      const search = this.$store.state.data.searchText;
-      if (search) {
-        const lowerSearch = search.toLowerCase();
+      if (this.hasSearch) {
+        this.onCategorySelected(1);
+        const search = this.$store.state.data.searchText.toLowerCase();
         const allProducts = this.filteredProducts(1, null);
-        return allProducts.filter((product) => product.name.toLowerCase().includes(lowerSearch));
+        return allProducts.filter((product) => product.name.toLowerCase().includes(search));
       }
       return this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
     },
@@ -120,6 +118,13 @@ export default {
 
     evaluateProductState() {
       if (!Object.keys(this.activeProductList).length) return;
+
+      if (!this.hasSearch) {
+        this.errorText = "Nem találhatóak termékek ebben a kategóriában.";
+      } else {
+        this.errorText = "A keresés nem hozott találatot.";
+      }
+
       this.noProductsFound = !this.displayedProducts.length;
       this.loading = false;
     },

@@ -5,7 +5,7 @@
         <v-btn
           v-for="category in categories"
           :key="category.id"
-          :class="['category-btn', { active: selectedCategoryId === category.id }]"
+          :class="['category-btn', { active: String(selectedCategoryId) === String(category.id) }]"
           outlined
           @click="selectCategory(category.id)">
           {{ category.name }}
