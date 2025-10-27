@@ -10,7 +10,7 @@
         class="categories-scroll" />
 
       <TheSubcategories
-        v-if="!hasSearch && displayedSubcategories.length"
+        v-if="subcategoryVisible && !hasSearch && displayedSubcategories.length"
         :key="subcategoryListKey"
         :subcategories="displayedSubcategories"
         :selectedCategoryId="selectedCategoryId"
@@ -20,10 +20,10 @@
 
     <TheSaleItems />
 
-    <v-container class="separator-line" fluid></v-container>
-
-    <!-- Show current category name -->
-    <h2 v-if="currentCategoryName" class="mt-2 mb-2">{{ currentCategoryName }}</h2>
+    <v-container class="separator-line" fluid>
+      <!-- Show current category name -->
+      <h2 v-if="currentCategoryName" class="mt-2 mb-2">{{ currentCategoryName }}</h2>
+    </v-container>
 
     <!-- Products title -->
     <h2 v-if="!noProductsFound" class="mt-2 mb-4">Termékek</h2>
@@ -96,6 +96,10 @@ export default {
     currentCategoryName() {
       const found = this.categoryList.find((c) => String(c.id) === String(this.selectedCategoryId));
       return found ? found.name : null;
+    },
+
+    subcategoryVisible() {
+      return this.$store.getters["config/getConfigValue"]("subcategoryVisible") ?? false;
     },
   },
 

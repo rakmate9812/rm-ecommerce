@@ -177,6 +177,12 @@ export default {
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
 
+    resetCategAndSubcateg() {
+      this.$store.commit("data/setSelectedCategoryId", 1);
+      this.$store.commit("data/setSelectedSubcategoryId", 1);
+      this.expandedCategoryId = null;
+    },
+
     clearSearchMobile() {
       this.clearSearch();
       this.showMobileSearch = true;

@@ -6,6 +6,7 @@ import user from "./user";
 import favorites from "./favorites";
 import modal from "./modal";
 import orders from "./orders";
+import config from './config';
 
 export default createStore({
   modules: {
@@ -14,6 +15,7 @@ export default createStore({
     user,
     favorites,
     modal,
-    orders
+    orders,
+    config
   },
 });

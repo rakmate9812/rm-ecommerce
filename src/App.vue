@@ -26,10 +26,12 @@ export default {
   },
 
   async created() {
+    await this.$store.dispatch('config/loadStoreConfig'); // until there are just a few config values, we can load them all at once with low risk of overloading the page
     await this.$store.dispatch("data/fetchData", "categories");
     await this.$store.dispatch("data/fetchData", "subcategories");
     await this.$store.dispatch("data/fetchData", "products");
     await this.$store.dispatch("cart/fetchCart");
+
   },
 
   methods: {
