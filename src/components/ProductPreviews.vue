@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4" lg="3">
+      <v-col v-for="product in filteredProducts" :key="product.id" cols="6" sm="6" md="4" lg="3">
         <v-card class="product-card" elevation="3" @click="viewDetails(product.id)">
           <div class="image-container">
             <div class="image-wrapper">
@@ -45,7 +45,7 @@
                 <v-icon start>
                   {{ isAddedToCart(product.id) ? "mdi-cart" : "mdi-cart-outline" }}
                 </v-icon>
-                {{ isAddedToCart(product.id) ? "Már kosárban" : "Kosárba" }}
+                {{ isAddedToCart(product.id) ? "Kosárban" : "Kosárba" }}
               </RateLimitedButton>
             </v-card-actions>
           </div>
@@ -187,12 +187,13 @@ export default {
 
 /* Mobile tweaks */
 @media (max-width: 768px) {
-  .logo-image {
-    height: 14em; /* shorter image */
+  .product-card {
+    margin: 5px; /* Add margin for spacing */
+    border-radius: 10px; /* Slightly smaller radius for mobile */
   }
 
-  .product-card {
-    margin-bottom: 12px;
+  .logo-image {
+    height: 14em; /* shorter image */
   }
 
   .button-actions {
