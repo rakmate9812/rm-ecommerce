@@ -8,13 +8,8 @@
       :home-button="true">
       <v-row justify="center">
         <v-col cols="12" md="10">
-          <!-- <div v-if="cartItems.length === 0" class="text-center py-16">
-            <h2 class="text-2xl font-medium mb-4">A kosár üres.</h2>
-            <p class="text-gray-600">Adjon hozzá termékeket a vásárláshoz!</p>
-          </div>
-
-          <div v-else> -->
-          <v-table class="elevation-1 rounded-lg">
+          <!-- Desktop Table -->
+          <v-table class="elevation-1 rounded-lg desktop-table">
             <thead>
               <tr>
                 <th class="text-left text-sm font-semibold">Termék</th>
@@ -51,15 +46,47 @@
             </tbody>
           </v-table>
 
+          <!-- Mobile Cards -->
+          <div class="mobile-cart">
+            <v-card
+              v-for="item in cartItems"
+              :key="item.productId"
+              class="mb-4 cart-item-card"
+              @click="goToProduct(item.productId)">
+              <v-card-text>
+                <div class="product-name mb-2">{{ item.name }}</div>
+
+                <div class="d-flex justify-space-between align-center mb-2">
+                  <div class="quantity-controls">
+                    <v-btn icon size="small" variant="text" @click.stop="decrementQuantity(item.productId)">
+                      <v-icon>mdi-minus</v-icon>
+                    </v-btn>
+                    <span class="mx-2 font-medium">{{ item.quantity }}</span>
+                    <v-btn icon size="small" variant="text" @click.stop="incrementQuantity(item.productId)">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </div>
+                  <v-btn icon color="error" size="small" variant="text" @click.stop="removeFromCart(item.productId)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+
+                <div class="d-flex justify-space-between price-row">
+                  <span class="text-grey">{{ item.unitPrice }} Ft/db</span>
+                  <span class="font-weight-bold">{{ item.quantity * item.unitPrice }} Ft</span>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+
           <v-divider class="my-8"></v-divider>
 
-          <div class="text-right">
+          <div class="text-right mobile-checkout">
             <p class="text-xl font-bold mb-4">Végösszeg: {{ cartTotal }} Ft</p>
-            <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar">
+            <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar" block>
               Tovább a szállításhoz
             </v-btn>
           </div>
-          <!-- </div> -->
         </v-col>
       </v-row>
     </loading-state>
@@ -113,7 +140,10 @@ export default {
     },
 
     decrementQuantity(productId) {
-      this.$store.dispatch("cart/modifyQuantity", { productId, quantity: -1 });
+      const item = this.cartItems.find((item) => item.productId === productId);
+      if (item && item.quantity > 1) {
+        this.$store.dispatch("cart/modifyQuantity", { productId, quantity: -1 });
+      }
     },
 
     removeFromCart(productId) {
@@ -146,3 +176,76 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.desktop-table {
+  display: none;
+}
+
+/* Mobile Styles */
+.mobile-cart {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-table {
+    display: none;
+  }
+
+  .mobile-cart {
+    display: block;
+  }
+
+  .cart-item-card {
+    cursor: pointer;
+  }
+
+  .product-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+  }
+
+  .price-row {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+  }
+
+  .mobile-checkout {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 16px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 -16px;
+  }
+}
+
+.cart-item-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.cart-item-card:hover {
+  transform: translateY(-2px);
+}
+
+.price-row {
+  font-size: 0.875rem;
+}
+
+.mobile-checkout {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .mobile-checkout {
+    display: none;
+  }
+}
+</style>

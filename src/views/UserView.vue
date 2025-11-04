@@ -68,7 +68,9 @@ export default {
     ...mapState("user", ["user"]),
     ...mapGetters("user", ["isAuthenticated", "userOrdersList"]),
     orders() {
-      return this.userOrdersList;
+      return [...this.userOrdersList].sort((a, b) => {
+        return new Date(b.creationDate) - new Date(a.creationDate);
+      });
     },
   },
   methods: {
