@@ -7,7 +7,7 @@
 
     <div v-else-if="notFound" class="text-center my-16">
       <v-icon v-if="icon" size="64" color="error">mdi-alert-circle-outline</v-icon>
-      <h2 class="text-h5 mt-4 mb-2">{{ errorText }}</h2>
+      <h2 class="text-h5 ma-3">{{ errorText }}</h2>
       <v-btn v-if="homeButton" class="mt-6" color="secondary" @click="navigateHome">
         <v-icon start>mdi-home</v-icon> Vissza a főoldalra
       </v-btn>

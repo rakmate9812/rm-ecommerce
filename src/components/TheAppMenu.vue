@@ -204,6 +204,7 @@ export default {
     logo() {
       this.$emit("logoClick");
       this.clearSearch();
+      this.resetCategAndSubcateg();
     },
 
     logoMobile() {
@@ -230,8 +231,8 @@ export default {
     },
 
     resetCategAndSubcateg() {
-      this.$store.commit("data/setSelectedCategoryId", 1);
-      this.$store.commit("data/setSelectedSubcategoryId", 1);
+      this.$store.commit("data/setSelectedCategoryId", "1"); // string "1" to match store state
+      this.$store.commit("data/setSelectedSubcategoryId", null);
       this.expandedCategoryId = null;
     },
 
