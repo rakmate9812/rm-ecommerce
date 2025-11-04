@@ -84,9 +84,16 @@
     </v-container>
 
     <!-- mobile drawer replacement -->
-    <v-overlay v-model="drawer" absolute class="mobile-drawer">
+    <v-overlay 
+      v-model="drawer" 
+      class="mobile-drawer"
+      location="right"
+      position="fixed"
+    >
       <div class="drawer-content right-drawer">
         <img src="@/assets/logo.png" alt="Logo" @click="logoMobile" class="drawer-logo" />
+
+        <h1 class="drawer-title">Kategória választó</h1>
 
         <v-list>
           <v-list-group
@@ -101,6 +108,29 @@
               </v-list-item-title>
             </template>
           </v-list-group>
+
+          <v-divider class="my-4"></v-divider>
+
+          <v-list-item to="/favourites" @click="drawer = false">
+            <template #prepend>
+              <v-icon>mdi-heart</v-icon>
+            </template>
+            <v-list-item-title>Kedvencek</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/cart" @click="drawer = false">
+            <template #prepend>
+              <v-icon>mdi-cart</v-icon>
+            </template>
+            <v-list-item-title>Kosár</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/about" @click="drawer = false">
+            <template #prepend>
+              <v-icon>mdi-information</v-icon>
+            </template>
+            <v-list-item-title>Névjegy</v-list-item-title>
+          </v-list-item>
         </v-list>
       </div>
     </v-overlay>
@@ -266,6 +296,12 @@ export default {
   .drawer-logo {
     width: 8rem;
     margin-bottom: 1rem;
+  }
+
+  .drawer-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: rgba(67, 127, 127);
   }
 }
 </style>
