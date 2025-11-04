@@ -49,7 +49,7 @@
         <img src="@/assets/logo.png" @click="logoMobile" alt="Logo" class="logo-icon mobile-logo" />
 
         <div class="mobile-actions">
-          <v-btn icon dense @click="toggleMobileSearch">
+          <v-btn v-if="searchVisible" icon dense @click="toggleMobileSearch">
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
           <v-btn icon dense to="/favourites">
@@ -84,12 +84,7 @@
     </v-container>
 
     <!-- mobile drawer replacement -->
-    <v-overlay 
-      v-model="drawer" 
-      class="mobile-drawer"
-      location="right"
-      position="fixed"
-    >
+    <v-overlay v-model="drawer" class="mobile-drawer" location="right" position="fixed">
       <div class="drawer-content right-drawer">
         <img src="@/assets/logo.png" alt="Logo" @click="logoMobile" class="drawer-logo" />
 
@@ -111,7 +106,14 @@
 
           <v-divider class="my-4"></v-divider>
 
-          <v-list-item to="/favourites" @click="drawer = false">
+          <v-list-item to="/user" @click="drawer = false">
+            <template #prepend>
+              <v-icon>mdi-account</v-icon>
+            </template>
+            <v-list-item-title>Fiók</v-list-item-title>
+          </v-list-item>
+
+          <!-- <v-list-item to="/favourites" @click="drawer = false">
             <template #prepend>
               <v-icon>mdi-heart</v-icon>
             </template>
@@ -123,7 +125,7 @@
               <v-icon>mdi-cart</v-icon>
             </template>
             <v-list-item-title>Kosár</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
 
           <v-list-item to="/about" @click="drawer = false">
             <template #prepend>
@@ -147,6 +149,7 @@ export default {
       drawer: false,
       showMobileSearch: false,
       expandedCategoryId: null,
+      isMobile: false,
     };
   },
 
@@ -157,9 +160,28 @@ export default {
     isAdmin() {
       return this.$store.getters["user/isAdmin"];
     },
+
+    // show search button when NOT mobile OR when on the home page
+    searchVisible() {
+      const isHome = this.$route && this.$route.path === "/";
+      return !this.isMobile || isHome;
+    },
+  },
+
+  mounted() {
+    this.updateIsMobile();
+    window.addEventListener("resize", this.updateIsMobile);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateIsMobile);
   },
 
   methods: {
+    updateIsMobile() {
+      this.isMobile = window.innerWidth <= 768;
+    },
+
     toggleMobileSearch() {
       if (!this.showMobileSearch) {
         this.searchText = null;
