@@ -86,7 +86,12 @@
     <!-- mobile drawer replacement -->
     <v-overlay v-model="drawer" class="mobile-drawer" location="right" position="fixed">
       <div class="drawer-content right-drawer">
-        <img src="@/assets/logo.png" alt="Logo" @click="logoMobile" class="drawer-logo" />
+        <div class="drawer-header">
+          <img src="@/assets/logo.png" alt="Logo" @click="logoMobile" class="drawer-logo" />
+          <v-btn icon dense @click="drawer = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </div>
 
         <h1 class="drawer-title">Kategória választó</h1>
 
@@ -96,9 +101,14 @@
             :key="category.id"
             :value="expandedCategoryId === category.id"
             @click="selectCategoryMobile(category.id)"
+            :disabled="!isHomePage"
             no-action>
             <template #activator>
-              <v-list-item-title :class="{ 'active-category': selectedCategoryId === category.id }">
+              <v-list-item-title
+                :class="{
+                  'active-category': selectedCategoryId === category.id,
+                  'disabled-category': !isHomePage,
+                }">
                 {{ category.name }}
               </v-list-item-title>
             </template>
@@ -166,6 +176,10 @@ export default {
       const isHome = this.$route && this.$route.path === "/";
       return !this.isMobile || isHome;
     },
+
+    isHomePage() {
+      return this.$route.path === "/";
+    },
   },
 
   mounted() {
@@ -175,6 +189,16 @@ export default {
 
   beforeUnmount() {
     window.removeEventListener("resize", this.updateIsMobile);
+  },
+
+  watch: {
+    // Watch for route changes
+    $route(to) {
+      // If navigating away from home, reset to category 1
+      if (to.path !== "/") {
+        this.resetCategAndSubcateg();
+      }
+    },
   },
 
   methods: {
@@ -193,6 +217,11 @@ export default {
     },
 
     selectCategoryMobile(categoryId) {
+      // Return early if not on home page
+      if (!this.isHomePage) {
+        return;
+      }
+
       this.clearSearchMobile();
       this.showMobileSearch = false;
       this.expandedCategoryId = this.expandedCategoryId === categoryId ? null : categoryId;
@@ -316,9 +345,14 @@ export default {
     padding: 16px;
     box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
   }
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
   .drawer-logo {
     width: 8rem;
-    margin-bottom: 1rem;
   }
 
   .drawer-title {
@@ -326,5 +360,11 @@ export default {
     margin-bottom: 1rem;
     color: rgba(67, 127, 127);
   }
+}
+
+/* disabled category style */
+.disabled-category {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
