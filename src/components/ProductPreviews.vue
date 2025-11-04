@@ -26,7 +26,7 @@
             {{ product.name }}
           </v-card-title>
 
-          <v-card-subtitle class="text-grey product-subtitle">
+          <v-card-subtitle v-if="showShortDescriptionOnProduct" class="text-grey product-subtitle">
             {{ product.shortDescription || "-" }}
           </v-card-subtitle>
 
@@ -83,6 +83,10 @@ export default {
 
   computed: {
     ...mapState("favorites", ["favorites"]), // use this sytax also
+
+    showShortDescriptionOnProduct() {
+      return this.$store.getters["config/getConfigValue"]("ShowShortDescriptionOnProduct") ?? false;
+    },
   },
 
   methods: {

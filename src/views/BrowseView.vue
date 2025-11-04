@@ -97,7 +97,7 @@ export default {
     },
 
     subcategoryVisible() {
-      return this.$store.getters["config/getConfigValue"]("subcategoryVisible") ?? false;
+      return this.$store.getters["config/getConfigValue"]("SubcategoryVisible") ?? false;
     },
   },
 
