@@ -27,7 +27,8 @@
               <v-col cols="12" md="5" class="mb-3 mb-md-0">
                 <div class="mb-4">
                   <h3 class="section-heading">Ár</h3>
-                  <p class="price-text">{{ product.price }} Ft</p>
+                  <p class="price-text">{{ formatPrice(product.price) }} Ft</p>
+                  <!-- Updated line -->
                 </div>
 
                 <div class="mb-3">
@@ -52,8 +53,8 @@
               </v-col>
             </v-row>
 
-            <!-- ACTIONS -->
-            <div class="action-buttons d-flex flex-column flex-sm-row justify-center ga-3 mt-6">
+            <!-- ACTIONS - Only visible on desktop -->
+            <div class="action-buttons d-none d-md-flex flex-column flex-sm-row justify-center ga-3 mt-6">
               <RateLimitedButton
                 :color="isAddedToCart ? 'primary' : 'secondary'"
                 variant="elevated"
@@ -82,6 +83,33 @@
         </v-row>
       </v-card>
     </loading-state>
+
+    <!-- Mobile sticky buttons -->
+    <div class="mobile-actions d-md-none">
+      <RateLimitedButton
+        :color="isAddedToCart ? 'primary' : 'secondary'"
+        variant="elevated"
+        :debounceTime="1000"
+        class="mobile-button"
+        @rlb-click="toggleToCart">
+        <v-icon start>
+          {{ isAddedToCart ? "mdi-cart" : "mdi-cart-outline" }}
+        </v-icon>
+        {{ isAddedToCart ? "Már kosárban" : "Kosárba" }}
+      </RateLimitedButton>
+
+      <RateLimitedButton
+        :color="isFavorited ? 'pink' : 'grey'"
+        variant="outlined"
+        :debounceTime="1000"
+        class="mobile-button"
+        @rlb-click="toggleToFavorites">
+        <v-icon start>
+          {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
+        </v-icon>
+        {{ isFavorited ? "Már kedvenc" : "Kedvencekhez" }}
+      </RateLimitedButton>
+    </div>
   </v-container>
 </template>
 
@@ -137,6 +165,11 @@ export default {
       }
 
       this.loading = false;
+    },
+
+    formatPrice(price) {
+      // spaces after every three digits
+      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     },
 
     toggleToCart() {
@@ -232,8 +265,35 @@ export default {
   margin-bottom: 0.5rem;
 }
 
-/* Mobile tweaks */
+/* Mobile actions */
+.mobile-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+
+.mobile-actions .mobile-button {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
+  .v-container {
+    padding-bottom: 140px !important;
+  }
+
+  /* Add padding to card bottom to match mobile actions padding */
+  .v-card {
+    padding-bottom: 16px !important;
+  }
+
   .product-title {
     font-size: 1.3rem;
   }
@@ -244,6 +304,31 @@ export default {
 
   .action-buttons {
     flex-direction: column !important;
+  }
+
+  .mobile-button {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* Add distinct styling for description container on mobile */
+  .description-container {
+    background-color: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 4px;
+  }
+
+  /* Make the scrollbar more visible on mobile */
+  .description-container::-webkit-scrollbar {
+    width: 4px;
+    background-color: #e0e0e0;
+  }
+
+  .description-container::-webkit-scrollbar-thumb {
+    background-color: #9e9e9e;
+    border-radius: 4px;
   }
 }
 </style>
