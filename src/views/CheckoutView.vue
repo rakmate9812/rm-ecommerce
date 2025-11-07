@@ -22,9 +22,20 @@
             <v-radio label="Online fizetés (hamarosan)" disabled value="online" />
           </v-radio-group>
 
-          <v-btn color="primary" @click="openConfirmModal" prepend-icon="mdi-cart-check"> Megrendelés </v-btn>
+          <!-- Desktop order button: hidden on mobile via CSS -->
+          <v-btn color="primary" @click="openConfirmModal" prepend-icon="mdi-cart-check" class="desktop-order-btn">
+            Megrendelés
+          </v-btn>
         </v-form>
       </div>
+    </div>
+
+    <!-- Mobile sticky checkout (visible only on small screens) -->
+    <div class="mobile-checkout">
+      <p class="text-lg font-bold mb-2">Végösszeg: {{ cartTotal }} Ft</p>
+      <v-btn color="primary" size="large" @click="openConfirmModal" prepend-icon="mdi-cart-check" block>
+        Megrendelés
+      </v-btn>
     </div>
 
     <!-- Modals -->
@@ -41,7 +52,7 @@
       @cancel="showConfirmModal = false" />
   </v-container>
 </template>
-
+  
 <script>
 import { mapGetters } from "vuex";
 import BaseModal from "@/components/BaseModal.vue";
@@ -96,9 +107,57 @@ export default {
         console.error("Order placement failed:", error);
         this.isPlacingOrder = false;
         alert("Hiba történt a megrendelés feldolgozásakor!");
-        // TODO show error modal or feedback here
       }
     },
   },
 };
 </script>
+
+<style scoped>
+/* Keep desktop view unchanged */
+
+/* Mobile styles aligned with CartView behavior */
+.mobile-checkout {
+  display: none;
+}
+
+/* hide the inline desktop button on mobile so we only show the sticky footer there */
+.desktop-order-btn {
+  display: inline-flex;
+}
+
+/* Mobile-specific rules */
+@media (max-width: 768px) {
+  /* Show sticky mobile checkout footer */
+  .mobile-checkout {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 12px 16px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 -16px;
+    z-index: 20;
+  }
+
+  /* Make the desktop button hidden on small screens to avoid duplicate action controls */
+  .desktop-order-btn {
+    display: none;
+  }
+
+  /* Slight font-size adjustments for better fit on small screens */
+  h1 {
+    font-size: 1.4rem;
+  }
+  .text-2xl {
+    font-size: 1.125rem;
+  }
+}
+
+/* Keep desktop-only behavior: hide mobile footer on larger screens */
+@media (min-width: 769px) {
+  .mobile-checkout {
+    display: none;
+  }
+}
+</style>

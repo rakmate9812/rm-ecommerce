@@ -179,7 +179,7 @@ export default {
 
 <style scoped>
 .desktop-table {
-  display: none;
+  /* display: none; */
 }
 
 /* Mobile Styles */

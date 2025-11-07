@@ -28,7 +28,6 @@
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-title>
-                    <strong>Szállítás módja:</strong>
                     <v-chip
                       :color="order.deliveryData.method === 'home' ? 'primary' : 'secondary'"
                       text-color="white"
@@ -51,8 +50,8 @@
             <v-card-text class="py-4">
               <!-- Table-like header row -->
               <v-row class="font-semibold mb-2">
-                <v-col cols="6">Termék</v-col>
-                <v-col cols="3" class="text-center">Mennyiség</v-col>
+                <v-col cols="4">Termék</v-col>
+                <v-col cols="5" class="text-center">Mennyiség</v-col>
                 <v-col cols="3" class="text-right">Egységár</v-col>
               </v-row>
 
@@ -64,9 +63,9 @@
                 :key="index"
                 class="py-2 align-center clickable-row"
                 @click="goToProduct(item.productId)">
-                <v-col cols="6" class="text-primary font-medium">{{ item.name }}</v-col>
+                <v-col cols="5" class="text-primary font-medium">{{ item.name }}</v-col>
                 <v-col cols="3" class="text-center">{{ item.quantity }} db</v-col>
-                <v-col cols="3" class="text-right">{{ item.unitPrice }} Ft</v-col>
+                <v-col cols="4" class="text-right">{{ formatPrice(item.unitPrice) }} Ft</v-col>
               </v-row>
             </v-card-text>
           </v-card>
@@ -78,7 +77,7 @@
             <v-card-text class="d-flex justify-space-between align-center text-lg py-4">
               <span class="font-semibold" style="font-size: large">Végösszeg</span>
               <span class="font-bold text-secondary" style="font-size: large"
-                >{{ order.totalPrice || order.total }} Ft</span
+                >{{ formatPrice(order.totalPrice || order.total) }} Ft</span
               >
             </v-card-text>
           </v-card>
@@ -138,6 +137,11 @@ export default {
   },
 
   methods: {
+    formatPrice(price) {
+      // spaces after every three digits
+      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    },
+
     goToProduct(productId) {
       if (productId) {
         this.$router.push(`/product/${productId}`);
