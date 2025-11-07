@@ -41,6 +41,10 @@
             <v-icon left class="me-2">mdi-cog</v-icon>
             Admin
           </v-btn>
+          <v-btn class="nav-button" variant="text" to="/about">
+            <v-icon left class="me-2">mdi-information</v-icon>
+            Névjegy
+          </v-btn>
         </v-col>
       </v-row>
 
