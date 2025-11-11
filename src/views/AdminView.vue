@@ -10,6 +10,9 @@
     <v-btn class="ma-2" @click="$router.push({ path: '/admin', query: { view: 'orders' } })" color="primary"
       >Megrendelések kezelése</v-btn
     >
+    <v-btn class="ma-2" @click="$router.push({ path: '/admin', query: { view: 'settings' } })" color="primary"
+      >Webshop beállítások</v-btn
+    >
 
     <v-btn v-if="test" @click="testing" color="primary" class="ma-2">Tesztgomb</v-btn>
     <v-container class="separator-line" fluid></v-container>
@@ -18,6 +21,7 @@
     <DisplayItems v-if="activeView === 'items'" />
     <ProductForm v-if="activeView === 'productForm'" />
     <ManageOrders v-if="activeView === 'orders'" />
+    <StoreSettings v-if="activeView === 'settings'" />
   </div>
 </template>
 
@@ -25,12 +29,14 @@
 import DisplayItems from "@/components/DisplayItems.vue";
 import ProductForm from "@/components/ProductForm.vue";
 import ManageOrders from "@/components/ManageOrders.vue";
+import StoreSettings from "@/components/StoreSettings.vue";
 
 export default {
   components: {
     DisplayItems,
     ProductForm,
     ManageOrders,
+    StoreSettings,
   },
   data() {
     return {

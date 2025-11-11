@@ -7,6 +7,7 @@ import favorites from "./favorites";
 import modal from "./modal";
 import orders from "./orders";
 import config from './config';
+import storeConfig from "@/store/storeConfig";
 
 export default createStore({
   modules: {
@@ -16,6 +17,7 @@ export default createStore({
     favorites,
     modal,
     orders,
-    config
+    config,
+    storeConfig
   },
 });
