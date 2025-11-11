@@ -31,7 +31,7 @@
           </v-card-subtitle>
 
           <v-card-text>
-            <strong class="product-price">{{ product.price }} Ft</strong>
+            <strong class="product-price">{{ $store.getters["data/formatPrice"](product.price) }} Ft</strong>
           </v-card-text>
 
           <div @click.stop>

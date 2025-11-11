@@ -81,6 +81,15 @@ export default {
 
             return filtered;
         },
+
+        // spaces after every three digits
+        formatPrice: () => (price) => {
+            if (price === null || price === undefined) return "";
+            // Remove existing spaces then coerce to number if possible
+            const cleaned = typeof price === "number" ? price : Number(String(price).replace(/\s/g, ""));
+            if (Number.isNaN(cleaned)) return String(price);
+            return cleaned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        },
     },
 
     mutations: {

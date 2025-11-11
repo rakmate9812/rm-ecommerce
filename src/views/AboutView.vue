@@ -2,8 +2,8 @@
   <div class="about">
     <h1>Rólunk</h1>
     <p>
-      Üdvözöljük az e-kereskedelmi platformunkon! Elkötelezettek vagyunk amellett, hogy a legjobb termékeket és
-      szolgáltatásokat nyújtsuk ügyfeleinknek.
+      Üdvözlünk az e-kereskedelmi platformunkon! Elkötelezettek vagyunk amellett, hogy a legjobb termékeket és
+      szolgáltatásokat nyújtsuk nektek és kedvenceiteknek.
     </p>
     <h2>Küldetésünk</h2>
     <p>
@@ -12,20 +12,18 @@
     </p>
     <h2>Kapcsolat</h2>
     <p>
-      Ha bármilyen kérdése van, keressen minket bizalommal a
+      Ha bármilyen kérdésed van, keress minket bizalommal az
       <a href="mailto:info@marcipetfood.hu">info@marcipetfood.hu</a> címen.
     </p>
     <h2>ÁSZF</h2>
     <p>
-      Az általános szerződési feltételeinket letöltheti az alábbi linkre kattintva:
+      Az általános szerződési feltételeinket letöltheted az alábbi linkre kattintva:
       <a class="download-link" href="/docs/aszf.pdf" target="_blank" rel="noopener" download> ÁSZF letöltése (PDF) </a>
     </p>
   </div>
 </template>
 
-<script>
-// ...existing code...
-</script>
+<script></script>
 
 <style scoped>
 .about {

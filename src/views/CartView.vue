@@ -35,7 +35,7 @@
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </td>
-                <td class="text-right">{{ item.unitPrice }}</td>
+                <td class="text-right">{{ $store.getters["data/formatPrice"](item.unitPrice) }}</td>
                 <td class="text-right">{{ item.quantity * item.unitPrice }}</td>
                 <td class="text-center">
                   <v-btn icon color="error" size="small" variant="text" @click.stop="removeFromCart(item.productId)">
@@ -72,8 +72,10 @@
                 </div>
 
                 <div class="d-flex justify-space-between price-row">
-                  <span class="text-grey">{{ item.unitPrice }} Ft/db</span>
-                  <span class="font-weight-bold">{{ item.quantity * item.unitPrice }} Ft</span>
+                  <span class="text-grey">{{ $store.getters["data/formatPrice"](item.unitPrice) }} Ft/db</span>
+                  <span class="font-weight-bold"
+                    >{{ $store.getters["data/formatPrice"](item.quantity * item.unitPrice) }} Ft</span
+                  >
                 </div>
               </v-card-text>
             </v-card>
@@ -82,7 +84,7 @@
           <v-divider class="my-8"></v-divider>
 
           <div class="text-right mobile-checkout">
-            <p class="text-xl font-bold mb-4">Végösszeg: {{ cartTotal }} Ft</p>
+            <p class="text-xl font-bold mb-4">Végösszeg: {{ $store.getters["data/formatPrice"](cartTotal) }} Ft</p>
             <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar" block>
               Tovább a szállításhoz
             </v-btn>

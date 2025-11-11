@@ -65,7 +65,7 @@
                 @click="goToProduct(item.productId)">
                 <v-col cols="5" class="text-primary font-medium">{{ item.name }}</v-col>
                 <v-col cols="3" class="text-center">{{ item.quantity }} db</v-col>
-                <v-col cols="4" class="text-right">{{ formatPrice(item.unitPrice) }} Ft</v-col>
+                <v-col cols="4" class="text-right">{{ $store.getters["data/formatPrice"](item.unitPrice) }} Ft</v-col>
               </v-row>
             </v-card-text>
           </v-card>
@@ -77,7 +77,7 @@
             <v-card-text class="d-flex justify-space-between align-center text-lg py-4">
               <span class="font-semibold" style="font-size: large">Végösszeg</span>
               <span class="font-bold text-secondary" style="font-size: large"
-                >{{ formatPrice(order.totalPrice || order.total) }} Ft</span
+                >{{ $store.getters["data/formatPrice"](order.totalPrice) }} Ft</span
               >
             </v-card-text>
           </v-card>
@@ -137,11 +137,6 @@ export default {
   },
 
   methods: {
-    formatPrice(price) {
-      // spaces after every three digits
-      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    },
-
     goToProduct(productId) {
       if (productId) {
         this.$router.push(`/product/${productId}`);

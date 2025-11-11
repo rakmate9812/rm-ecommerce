@@ -82,34 +82,34 @@
           </v-col>
         </v-row>
       </v-card>
+
+      <!-- Mobile sticky buttons -->
+      <div v-if="!productNotFound" class="mobile-actions d-md-none">
+        <RateLimitedButton
+          :color="isAddedToCart ? 'primary' : 'secondary'"
+          variant="elevated"
+          :debounceTime="1000"
+          class="mobile-button"
+          @rlb-click="toggleToCart">
+          <v-icon start>
+            {{ isAddedToCart ? "mdi-cart" : "mdi-cart-outline" }}
+          </v-icon>
+          {{ isAddedToCart ? "Már kosárban" : "Kosárba" }}
+        </RateLimitedButton>
+
+        <RateLimitedButton
+          :color="isFavorited ? 'pink' : 'grey'"
+          variant="outlined"
+          :debounceTime="1000"
+          class="mobile-button"
+          @rlb-click="toggleToFavorites">
+          <v-icon start>
+            {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
+          </v-icon>
+          {{ isFavorited ? "Már kedvenc" : "Kedvencekhez" }}
+        </RateLimitedButton>
+      </div>
     </loading-state>
-
-    <!-- Mobile sticky buttons -->
-    <div class="mobile-actions d-md-none">
-      <RateLimitedButton
-        :color="isAddedToCart ? 'primary' : 'secondary'"
-        variant="elevated"
-        :debounceTime="1000"
-        class="mobile-button"
-        @rlb-click="toggleToCart">
-        <v-icon start>
-          {{ isAddedToCart ? "mdi-cart" : "mdi-cart-outline" }}
-        </v-icon>
-        {{ isAddedToCart ? "Már kosárban" : "Kosárba" }}
-      </RateLimitedButton>
-
-      <RateLimitedButton
-        :color="isFavorited ? 'pink' : 'grey'"
-        variant="outlined"
-        :debounceTime="1000"
-        class="mobile-button"
-        @rlb-click="toggleToFavorites">
-        <v-icon start>
-          {{ isFavorited ? "mdi-heart" : "mdi-heart-outline" }}
-        </v-icon>
-        {{ isFavorited ? "Már kedvenc" : "Kedvencekhez" }}
-      </RateLimitedButton>
-    </div>
   </v-container>
 </template>
 
