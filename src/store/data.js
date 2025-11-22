@@ -90,6 +90,55 @@ export default {
             if (Number.isNaN(cleaned)) return String(price);
             return cleaned.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         },
+
+
+        /**
+         * Returns a sorted array of products based on the selected sorting option.
+         * Supported options:
+         * - "name": Sorts alphabetically by product name (A-Z).
+         * - "priceAsc": Sorts by price, ascending.
+         * - "priceDesc": Sorts by price, descending.
+         * - "dateAsc": Sorts by creation date, oldest first.
+         * - "dateDesc": Sorts by creation date, newest first.
+         * - "custom": Sorts by the admin-defined customOrder array from storeConfig.
+         * If sortingOption is not provided, uses the global storeConfig setting.
+         * @param {Array} products - Array of product objects to sort.
+         * @param {string} [sortingOption] - Sorting mode.
+         * @param {Array} [customOrder] - Optional array of product IDs for custom sorting.
+         * @returns {Array} Sorted array of products.
+         */
+        sortedProducts: (state, getters, rootState, rootGetters) => (products, sortingOption = null) => {
+            if (!Array.isArray(products)) return [];
+            // Use storeConfig sortingOption if not provided
+            const option = sortingOption || rootGetters["storeConfig/sortingOption"] || "name";
+            switch (option) {
+                case "name":
+                    return [...products].sort((a, b) =>
+                        a.name.localeCompare(b.name, "hu", { sensitivity: "base" })
+                    );
+                case "priceAsc":
+                    return [...products].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+                case "priceDesc":
+                    return [...products].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+                case "dateAsc":
+                    return [...products].sort((a, b) => {
+                        const dateA = new Date(a.creationDate || a.date || 0);
+                        const dateB = new Date(b.creationDate || b.date || 0);
+                        return dateA - dateB;
+                    });
+                case "dateDesc":
+                    return [...products].sort((a, b) => {
+                        const dateA = new Date(a.creationDate || a.date || 0);
+                        const dateB = new Date(b.creationDate || b.date || 0);
+                        return dateB - dateA;
+                    });
+                case "custom":
+                    // Custom sorting logic later TODO
+                    return products;
+                default:
+                    return products;
+            }
+        },
     },
 
     mutations: {

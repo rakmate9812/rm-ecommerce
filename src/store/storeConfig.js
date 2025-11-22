@@ -10,6 +10,8 @@ export default {
             SaleItemsSmallerText: "",
             ShowShortDescriptionOnProduct: false,
             SubcategoryVisible: false,
+            sortingOption: "name", 
+            customOrder: [],
         },
     }),
 
@@ -47,7 +49,8 @@ export default {
 
     getters: {
         storeConfig: (state) => state.storeConfig,
-
+        sortingOption: (state) => state.storeConfig.sortingOption ?? "name",
+        customOrder: (state) => state.storeConfig.customOrder ?? [],
         saleItemsHeaderText: (state) => state.storeConfig.SaleItemsHeaderText,
         saleItemsSmallerText: (state) => state.storeConfig.SaleItemsSmallerText,
         showShortDescription: (state) => state.storeConfig.ShowShortDescriptionOnProduct,

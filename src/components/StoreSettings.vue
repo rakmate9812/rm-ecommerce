@@ -14,7 +14,7 @@
               outlined
               dense
               class="mb-2"></v-text-field>
-            <p class="text-xs text-gray-500">Ez a szöveg jelenik meg a narancssárga sávban.</p>
+            <p class="text-xs text-gray-500">Ez a szöveg jelenik meg a narancssárga sávban nagyban.</p>
           </div>
           <v-divider class="my-4"></v-divider>
 
@@ -27,7 +27,7 @@
               outlined
               dense
               class="mb-2"></v-text-field>
-            <p class="text-xs text-gray-500">Ez a kisebb szöveg a narancs sáv alatt.</p>
+            <p class="text-xs text-gray-500">Ez a kisebb szöveg a narancs sávban.</p>
           </div>
           <v-divider class="my-4"></v-divider>
 
@@ -36,15 +36,36 @@
             <v-switch
               v-model="formData.ShowShortDescriptionOnProduct"
               label="Rövid leírás megjelenítése a termékoldalakon"
-              class="mb-2"></v-switch>
+              class="mb-2"
+              color="primary"></v-switch>
             <p class="text-xs text-gray-500">Ha engedélyezve van, a termékek rövid leírása megjelenik az oldalakon.</p>
           </div>
           <v-divider class="my-4"></v-divider>
 
           <!-- Subcategory Visible -->
           <div class="mb-6">
-            <v-switch v-model="formData.SubcategoryVisible" label="Alkategóriák megjelenítése" class="mb-2"></v-switch>
+            <v-switch
+              v-model="formData.SubcategoryVisible"
+              label="Alkategóriák megjelenítése"
+              class="mb-2"
+              color="primary"></v-switch>
             <p class="text-xs text-gray-500">Ha engedélyezve van, az alkategóriák láthatók lesznek a navigációban.</p>
+          </div>
+          <v-divider class="my-4"></v-divider>
+
+          <!-- Product Sorting Option -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold mb-2">Termékek rendezési módja</label>
+            <v-select
+              v-model="formData.sortingOption"
+              :items="sortingOptions"
+              label="Rendezés"
+              outlined
+              dense
+              class="mb-2"
+              item-title="label"
+              item-value="value"></v-select>
+            <p class="text-xs text-gray-500">Ez határozza meg, hogyan jelennek meg a termékek a böngészésnél.</p>
           </div>
           <v-divider class="my-4"></v-divider>
 
@@ -74,8 +95,17 @@ export default {
         SaleItemsSmallerText: "",
         ShowShortDescriptionOnProduct: false,
         SubcategoryVisible: false,
+        sortingOption: "name",
       },
       originalData: {},
+      sortingOptions: [
+        { label: "Név szerint (A-Z)", value: "name" },
+        { label: "Ár szerint növekvő", value: "priceAsc" },
+        { label: "Ár szerint csökkenő", value: "priceDesc" },
+        { label: "Dátum szerint növekvő", value: "dateAsc" },
+        { label: "Dátum szerint csökkenő", value: "dateDesc" },
+        { label: "Egyedi", value: "custom" },
+      ],
     };
   },
 
@@ -91,6 +121,8 @@ export default {
         const config = this.$store.getters["storeConfig/storeConfig"];
         this.formData = { ...config };
         this.originalData = { ...config };
+        // fallback if not set
+        if (!this.formData.sortingOption) this.formData.sortingOption = "name";
       } catch (error) {
         console.error("Error fetching store settings:", error);
         this.$store.commit("modal/showModal", "Hiba a beállítások betöltésekor!");
@@ -102,6 +134,7 @@ export default {
     async saveSettings() {
       const res = confirm("Biztosan mented?");
       if (res) {
+        this.saving = true;
         try {
           await this.$store.dispatch("storeConfig/updateStoreConfig", this.formData);
           this.originalData = { ...this.formData };

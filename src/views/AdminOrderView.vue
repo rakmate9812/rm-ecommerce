@@ -1,3 +1,4 @@
+<!-- for the admin to be able to see any order -->
 <template>
   <v-container class="py-8">
     <loading-state
@@ -7,7 +8,7 @@
       error-text="Nem található a rendelés."
       :icon="true"
       :home-button="true">
-      <h1 class="text-3xl font-bold mb-8 text-center">📦 Rendelés részletei (Admin)</h1>
+      <h1 class="text-3xl font-bold mb-8 text-center">Rendelés részletei (Admin)</h1>
 
       <v-row dense>
         <!-- Order Status Update -->

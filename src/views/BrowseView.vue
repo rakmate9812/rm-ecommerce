@@ -84,7 +84,11 @@ export default {
         const allProducts = this.filteredProducts(1, null);
         return allProducts.filter((product) => product.name.toLowerCase().includes(search));
       }
-      return this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId);
+      // Use Vuex getter for sorting with storeConfig sortingOption
+      return this.$store.getters["data/sortedProducts"](
+        this.filteredProducts(this.selectedCategoryId, this.selectedSubcategoryId)
+        // no need to pass sortingOption, will use storeConfig
+      );
     },
 
     hasSearch() {
@@ -127,6 +131,10 @@ export default {
 
       this.noProductsFound = !this.displayedProducts.length;
       this.loading = false;
+    },
+
+    sortFilteredProducts(products) {
+      return [...products].sort((a, b) => a.name.localeCompare(b.name, "hu", { sensitivity: "base" }));
     },
   },
 
