@@ -35,7 +35,7 @@
             <td>{{ getUserInfo(order.userId) }}</td>
             <td>{{ formatDate(order.creationDate) || "-" }}</td>
             <td :class="colorStatusBackground(order.status)">{{ order.status || "-" }}</td>
-            <td>{{ order.totalPrice }} Ft</td>
+            <td>{{ order.total }}  Ft</td>
           </tr>
         </tbody>
       </table>

@@ -71,14 +71,27 @@
           </v-card>
         </v-col>
 
-        <!-- Total Price -->
+        <!-- Total Price & Discount Summary -->
         <v-col cols="12" class="mt-6">
           <v-card class="rounded-lg elevation-2">
-            <v-card-text class="d-flex justify-space-between align-center text-lg py-4">
-              <span class="font-semibold" style="font-size: large">Végösszeg</span>
-              <span class="font-bold text-secondary" style="font-size: large"
-                >{{ $store.getters["data/formatPrice"](order.totalPrice) }} Ft</span
-              >
+            <v-card-text class="py-4">
+              <div class="mb-2 d-flex justify-space-between">
+                <span>Részösszeg</span>
+                <span>{{ $store.getters["data/formatPrice"](order.subtotal) }} Ft</span>
+              </div>
+              <div v-if="order.discountPercentage > 0" class="mb-2 d-flex justify-space-between text-success">
+                <span>
+                  {{ order.discountText ? order.discountText : "Kedvezmény" }} ({{ order.discountPercentage }}%)
+                </span>
+                <span>-{{ $store.getters["data/formatPrice"](order.discountAmount) }} Ft</span>
+              </div>
+              <v-divider class="my-2"></v-divider>
+              <div class="d-flex justify-space-between align-center text-lg">
+                <span class="font-semibold" style="font-size: large">Végösszeg</span>
+                <span class="font-bold text-secondary" style="font-size: large">
+                  {{ $store.getters["data/formatPrice"](order.total) }} Ft
+                </span>
+              </div>
             </v-card-text>
           </v-card>
         </v-col>
@@ -153,5 +166,8 @@ export default {
 }
 .clickable-row:hover {
   background-color: #f5f5f5;
+}
+.text-success {
+  color: #4caf50;
 }
 </style>

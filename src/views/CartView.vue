@@ -83,8 +83,37 @@
 
           <v-divider class="my-8"></v-divider>
 
+          <!-- Desktop Checkout Summary -->
+          <div class="text-right desktop-checkout">
+            <div class="mb-2">
+              <p class="text-lg mb-2">Termékek összértéke: {{ $store.getters["data/formatPrice"](cartSubtotal) }} Ft</p>
+              <div v-if="discountPercentage > 0" class="text-success mb-2">
+                <p class="text-md">
+                  {{ discountForAllText }} -{{ discountPercentage }}% : -{{
+                    $store.getters["data/formatPrice"](discountAmount)
+                  }}
+                  Ft
+                </p>
+              </div>
+              <p class="text-xl font-bold mb-4">Végösszeg: {{ $store.getters["data/formatPrice"](cartTotal) }} Ft</p>
+            </div>
+            <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar">
+              Tovább a szállításhoz
+            </v-btn>
+          </div>
+
+          <!-- Mobile Checkout Summary -->
           <div class="text-right mobile-checkout">
-            <p class="text-xl font-bold mb-4">Végösszeg: {{ $store.getters["data/formatPrice"](cartTotal) }} Ft</p>
+            <div v-if="discountPercentage > 0" class="mb-1">
+              <span class="text-sm text-grey-darken-1">
+                Eredeti ár:
+                <span class="text-decoration-line-through"
+                  >{{ $store.getters["data/formatPrice"](cartSubtotal) }} Ft</span
+                >
+              </span>
+              <span class="text-success text-sm ml-2">(-{{ discountPercentage }}%)</span>
+            </div>
+            <p class="text-xl font-bold mb-2">Végösszeg {{ $store.getters["data/formatPrice"](cartTotal) }} Ft</p>
             <v-btn color="primary" size="large" @click="checkout" prepend-icon="mdi-calendar" block>
               Tovább a szállításhoz
             </v-btn>
@@ -111,9 +140,20 @@ export default {
     cartItems() {
       return this.$store.getters["cart/cartItemsDetailed"];
     },
-
+    cartSubtotal() {
+      return this.$store.getters["cart/cartSubtotal"];
+    },
+    discountPercentage() {
+      return this.$store.getters["cart/discountPercentage"];
+    },
+    discountAmount() {
+      return this.$store.getters["cart/discountAmount"];
+    },
     cartTotal() {
       return this.$store.getters["cart/cartTotal"];
+    },
+    discountForAllText() {
+      return this.$store.getters["storeConfig/discountForAllText"];
     },
   },
 
@@ -157,7 +197,6 @@ export default {
         this.$store.commit("modal/showModal", "A továbbiakhoz be kell jelentkezz!");
         return;
       }
-
       this.$router.push("/checkout");
     },
 
@@ -168,8 +207,7 @@ export default {
 
   watch: {
     cartItems: {
-      handler(/*newValue, oldValue*/) {
-        // Avoid evaluating on initial empty state while loading
+      handler() {
         if (!this.loading) {
           this.evaluateCartState();
         }
@@ -189,6 +227,20 @@ export default {
   display: none;
 }
 
+/* Desktop checkout - visible on larger screens */
+.desktop-checkout {
+  display: block;
+}
+
+/* Mobile checkout - hidden by default */
+.mobile-checkout {
+  display: none;
+}
+
+.text-success {
+  color: #4caf50;
+}
+
 @media (max-width: 768px) {
   .desktop-table {
     display: none;
@@ -196,6 +248,20 @@ export default {
 
   .mobile-cart {
     display: block;
+  }
+
+  .desktop-checkout {
+    display: none;
+  }
+
+  .mobile-checkout {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 16px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 -16px;
   }
 
   .cart-item-card {
@@ -217,15 +283,6 @@ export default {
     padding-top: 8px;
     border-top: 1px solid #eee;
   }
-
-  .mobile-checkout {
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding: 16px;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-    margin: 0 -16px;
-  }
 }
 
 .cart-item-card {
@@ -239,15 +296,5 @@ export default {
 
 .price-row {
   font-size: 0.875rem;
-}
-
-.mobile-checkout {
-  display: block;
-}
-
-@media (min-width: 768px) {
-  .mobile-checkout {
-    display: none;
-  }
 }
 </style>

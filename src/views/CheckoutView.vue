@@ -22,6 +22,28 @@
             <v-radio label="Online fizetés (hamarosan)" disabled value="online" />
           </v-radio-group>
 
+          <!-- Price Summary -->
+          <v-card class="mb-4 pa-4" outlined>
+            <div class="price-summary">
+              <div class="d-flex justify-space-between mb-2">
+                <span>Részösszeg</span>
+                <span class="">{{ $store.getters["data/formatPrice"](cartSubtotal) }} Ft</span>
+              </div>
+
+              <div v-if="discountPercentage > 0" class="d-flex justify-space-between mb-2 text-success">
+                <span>{{ discountForAllText }} ({{ discountPercentage }}%)</span>
+                <span class="">-{{ $store.getters["data/formatPrice"](discountAmount) }} Ft</span>
+              </div>
+
+              <v-divider class="my-2"></v-divider>
+
+              <div class="d-flex justify-space-between">
+                <span class="text-h6">Végösszeg</span>
+                <span class="text-h6 text-secondary">{{ $store.getters["data/formatPrice"](cartTotal) }} Ft</span>
+              </div>
+            </div>
+          </v-card>
+
           <!-- Desktop order button: hidden on mobile via CSS -->
           <v-btn color="primary" @click="openConfirmModal" prepend-icon="mdi-cart-check" class="desktop-order-btn">
             Megrendelés
@@ -32,7 +54,7 @@
 
     <!-- Mobile sticky checkout (visible only on small screens) -->
     <div class="mobile-checkout">
-      <p class="text-lg font-bold mb-2">Végösszeg: {{ cartTotal }} Ft</p>
+      <p class="text-lg font-bold mb-2">Végösszeg {{ $store.getters["data/formatPrice"](cartTotal) }} Ft</p>
       <v-btn color="primary" size="large" @click="openConfirmModal" prepend-icon="mdi-cart-check" block>
         Megrendelés
       </v-btn>
@@ -46,21 +68,19 @@
 
     <BaseModal
       :visible="showConfirmModal"
-      message="Megerősíted a megrendelést?"
+      :message="confirmMessage"
       :cancel-visible="true"
       @ok="placeOrder"
       @cancel="showConfirmModal = false" />
   </v-container>
 </template>
-  
+
 <script>
 import { mapGetters } from "vuex";
 import BaseModal from "@/components/BaseModal.vue";
 
 export default {
-  components: {
-    BaseModal,
-  },
+  components: { BaseModal },
   data() {
     return {
       deliveryData: {
@@ -69,16 +89,22 @@ export default {
         address: "",
         method: "",
       },
-
       showValidationModal: false,
       showConfirmModal: false,
       isPlacingOrder: false,
     };
   },
   computed: {
-    ...mapGetters("cart", ["cartItemsDetailed", "cartTotal"]),
+    ...mapGetters("cart", ["cartItemsDetailed", "cartSubtotal", "cartTotal", "discountPercentage", "discountAmount"]),
+    discountForAllText() {
+      return this.$store.getters["storeConfig/discountForAllText"];
+    },
     cartItems() {
       return this.cartItemsDetailed;
+    },
+
+    confirmMessage() {
+      return `Megerősíted a megrendelést?`;
     },
   },
   methods: {
@@ -96,10 +122,18 @@ export default {
       this.isPlacingOrder = true;
 
       try {
-        const orderId = await this.$store.dispatch("orders/placeOrder", {
-          deliveryData: this.deliveryData,
-          cartItems: this.cartItemsDetailed,
+        const details = {
+          deliveryData: { ...this.deliveryData },
+          subtotal: this.cartSubtotal,
+          discountPercentage: this.discountPercentage,
+          discountAmount: this.discountAmount,
+          discountText: this.discountForAllText,
           total: this.cartTotal,
+        };
+
+        const orderId = await this.$store.dispatch("orders/placeOrder", {
+          cartItems: this.cartItemsDetailed,
+          details,
         });
 
         this.$router.push(`/order/${orderId}`);
@@ -124,6 +158,14 @@ export default {
 /* hide the inline desktop button on mobile so we only show the sticky footer there */
 .desktop-order-btn {
   display: inline-flex;
+}
+
+.price-summary {
+  font-size: 1rem;
+}
+
+.text-success {
+  color: #4caf50;
 }
 
 /* Mobile-specific rules */

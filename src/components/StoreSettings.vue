@@ -69,6 +69,36 @@
           </div>
           <v-divider class="my-4"></v-divider>
 
+          <!-- Discount For All -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold mb-2">Általános kedvezmény (%)</label>
+            <v-text-field
+              v-model.number="formData.discountForAll"
+              label="Kedvezmény százalék"
+              type="number"
+              outlined
+              dense
+              min="0"
+              max="100"
+              class="mb-2"></v-text-field>
+            <p class="text-xs text-gray-500">Ez a kedvezmény minden rendelésre automatikusan érvényesül (0-100%).</p>
+          </div>
+
+          <!-- Discount For All Text-->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold mb-2">Általános kedvezmény szöveg</label>
+            <v-text-field
+              v-model="formData.discountForAllText"
+              label="Kedvezmény százalék szövege (pl Nyitási akció, Karácsonyi akció)"
+              outlined
+              dense
+              class="mb-2"></v-text-field>
+            <p class="text-xs text-gray-500">
+              Ez a szöveg jelenik majd meg a felületen és a számlán is teljes végösszegű kedvezmény esetén (HA a kedvezmény nagyobb mint 0).
+            </p>
+          </div>
+          <v-divider class="my-4"></v-divider>
+
           <!-- Buttons -->
           <div class="d-flex gap-3 mt-8">
             <v-btn color="primary" size="large" type="submit" prepend-icon="mdi-content-save" :loading="saving">
@@ -96,6 +126,7 @@ export default {
         ShowShortDescriptionOnProduct: false,
         SubcategoryVisible: false,
         sortingOption: "name",
+        discountForAll: 0,
       },
       originalData: {},
       sortingOptions: [
@@ -123,6 +154,7 @@ export default {
         this.originalData = { ...config };
         // fallback if not set
         if (!this.formData.sortingOption) this.formData.sortingOption = "name";
+        if (!this.formData.discountForAll) this.formData.discountForAll = 0;
       } catch (error) {
         console.error("Error fetching store settings:", error);
         this.$store.commit("modal/showModal", "Hiba a beállítások betöltésekor!");

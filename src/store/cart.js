@@ -115,11 +115,25 @@ export default {
             });
         },
 
-        cartTotal(state, getters) {
+        cartSubtotal(state, getters) {
             return getters.cartItemsDetailed.reduce(
                 (sum, item) => sum + item.quantity * item.unitPrice,
                 0
             );
+        },
+
+        discountPercentage(state, getters, rootState, rootGetters) {
+            return rootGetters["storeConfig/discountForAll"] || 0;
+        },
+
+        discountAmount(state, getters) {
+            const subtotal = getters.cartSubtotal;
+            const percentage = getters.discountPercentage;
+            return Math.round(subtotal * (percentage / 100));
+        },
+
+        cartTotal(state, getters) {
+            return getters.cartSubtotal - getters.discountAmount;
         },
     },
 };

@@ -10,8 +10,10 @@ export default {
             SaleItemsSmallerText: "",
             ShowShortDescriptionOnProduct: false,
             SubcategoryVisible: false,
-            sortingOption: "name", 
+            sortingOption: "name",
             customOrder: [],
+            discountForAll: 0,
+            discountForAllText: ""
         },
     }),
 
@@ -55,5 +57,7 @@ export default {
         saleItemsSmallerText: (state) => state.storeConfig.SaleItemsSmallerText,
         showShortDescription: (state) => state.storeConfig.ShowShortDescriptionOnProduct,
         subcategoryVisible: (state) => state.storeConfig.SubcategoryVisible,
+        discountForAll: (state) => state.storeConfig.discountForAll ?? 0,
+        discountForAllText: (state) => state.storeConfig.discountForAllText,
     },
 };

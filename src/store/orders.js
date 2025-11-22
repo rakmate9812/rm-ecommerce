@@ -3,7 +3,7 @@ export default {
 
     actions: {
         // returns the orderId
-        async placeOrder({ rootState, dispatch }, { deliveryData, cartItems, total }) {
+        async placeOrder({ rootState, dispatch }, { cartItems, details }) {
             const user = rootState.user.user;
 
             if (!cartItems || cartItems.length === 0) {
@@ -11,26 +11,24 @@ export default {
                 return null;
             }
 
+            const cleanedDetails = cleanNonUsedData(details);
+
             const orderData = {
                 userId: user.uid,
                 status: "pending",
                 items: cartItems,
-                totalPrice: total,
-                deliveryData,
+                ...cleanedDetails,
             };
 
-            // Pass userId explicitly to handle nested orders/{userId}
             const { id: orderId } = await dispatch(
                 "data/addDataToDb",
                 {
                     path: "orders",
                     data: orderData,
-                    userId: user.uid, // Pass null if no user, though ideally you'd require auth
+                    userId: user.uid,
                 },
                 { root: true }
             );
-
-            // console.log("Order placed with ID:", orderId);
 
             await dispatch("cart/clearCart", null, { root: true });
 
@@ -38,3 +36,14 @@ export default {
         },
     },
 };
+
+function cleanNonUsedData(details) {
+    const cleaned = { ...details };
+    if (cleaned.discountPercentage === 0) {
+        delete cleaned.discountPercentage;
+        delete cleaned.discountAmount;
+        delete cleaned.discountText;
+    }
+    // Will add more cleaning rules here if needed for firebase space saving purposes
+    return cleaned;
+}

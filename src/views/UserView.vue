@@ -15,7 +15,7 @@
         <div v-if="orders.length">
           <v-card v-for="order in orders" :key="order.id" class="mb-3 order-card" @click="goToOrder(order.id)">
             <v-card-title class="justify-space-between">
-              <span>{{ formatCurrency(order.totalPrice) }}</span>
+              <span>{{ formatCurrency(order.total) }}</span>
               <div></div>
               <small>{{ formatDate(order.creationDate) }}</small>
             </v-card-title>
