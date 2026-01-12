@@ -1,4 +1,4 @@
-import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref as storageRef, uploadBytes, getDownloadURL, /*deleteObject*/ } from "firebase/storage";
 import { storage } from "@/firebaseConfig";
 
 /**

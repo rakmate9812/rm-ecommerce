@@ -1,3 +1,4 @@
+// ...existing code...
 <template>
   <div class="store-settings">
     <h2 class="text-2xl font-bold mb-6">Beállítások</h2>
@@ -16,7 +17,7 @@
               class="mb-2"></v-text-field>
             <p class="text-xs text-gray-500">Ez a szöveg jelenik meg a narancssárga sávban nagyban.</p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Sale Items Smaller Text -->
           <div class="mb-6">
@@ -29,7 +30,7 @@
               class="mb-2"></v-text-field>
             <p class="text-xs text-gray-500">Ez a kisebb szöveg a narancs sávban.</p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Show Short Description -->
           <div class="mb-6">
@@ -40,7 +41,7 @@
               color="primary"></v-switch>
             <p class="text-xs text-gray-500">Ha engedélyezve van, a termékek rövid leírása megjelenik az oldalakon.</p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Subcategory Visible -->
           <div class="mb-6">
@@ -51,7 +52,7 @@
               color="primary"></v-switch>
             <p class="text-xs text-gray-500">Ha engedélyezve van, az alkategóriák láthatók lesznek a navigációban.</p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Product Sorting Option -->
           <div class="mb-6">
@@ -67,7 +68,7 @@
               item-value="value"></v-select>
             <p class="text-xs text-gray-500">Ez határozza meg, hogyan jelennek meg a termékek a böngészésnél.</p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Discount For All -->
           <div class="mb-6">
@@ -81,7 +82,10 @@
               min="0"
               max="100"
               class="mb-2"></v-text-field>
-            <p class="text-xs text-gray-500">Ez a kedvezmény minden rendelésre automatikusan érvényesül (0-100%).</p>
+            <p class="text-xs text-gray-500">
+              Ez a kedvezmény minden jövőbeli rendelésre automatikusan érvényesül (0-100%). Ha 0-t írsz, nem jelenik meg
+              semmi. Nem befolyásolja a már meglévő megrendeléseket!
+            </p>
           </div>
 
           <!-- Discount For All Text-->
@@ -94,10 +98,11 @@
               dense
               class="mb-2"></v-text-field>
             <p class="text-xs text-gray-500">
-              Ez a szöveg jelenik majd meg a felületen és a számlán is teljes végösszegű kedvezmény esetén (HA a kedvezmény nagyobb mint 0).
+              Ez a szöveg jelenik majd meg a felületen és a számlán is teljes végösszegű kedvezmény esetén (HA a
+              kedvezmény nagyobb mint 0).
             </p>
           </div>
-          <v-divider class="my-4"></v-divider>
+          <div class="custom-divider my-4"></div>
 
           <!-- Buttons -->
           <div class="d-flex gap-3 mt-8">
@@ -194,5 +199,14 @@ export default {
 
 .gap-3 {
   gap: 12px;
+}
+
+/* Custom bold dividers */
+.custom-divider {
+  display: block;
+  width: 100%;
+  height: 4px; /* bolder thickness */
+  background-color: rgba(0, 0, 0); /* slightly darker */
+  border-radius: 2px;
 }
 </style>

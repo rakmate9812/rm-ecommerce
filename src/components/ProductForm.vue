@@ -115,9 +115,11 @@ export default {
 
     onFileSelected(event) {
       const file = event.target.files?.[0];
+      console.log("file")
       if (!file) {
         this.selectedImageFile = null;
         this.imagePreview = null;
+        console.log("file null")
         return;
       }
       this.selectedImageFile = file;

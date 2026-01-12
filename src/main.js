@@ -40,6 +40,26 @@ const handleAuthStateChange = async (user) => {
         const role = roleSnapshot.exists() ? roleSnapshot.val() : null;
         store.commit("user/setRole", role);
 
+        /* // THIS SCRIPT IS FOR DEBUGGING THE STORAGE CLAIMS
+        // Ensure ID token is refreshed so custom claims appear, then log them for debugging
+        try {
+            if (auth.currentUser) {
+                await auth.currentUser.getIdToken(true); // force refresh
+                const idRes = await auth.currentUser.getIdTokenResult();
+                console.log("ID token claims:", idRes.claims);
+            }
+        } catch (e) {
+            console.error("Error refreshing token / reading claims:", e);
+        }
+
+        // helper usable from browser console: call window.logClaims()
+        window.logClaims = async () => {
+            if (!auth.currentUser) return console.log("no current user");
+            const r = await auth.currentUser.getIdTokenResult();
+            console.log(r.claims);
+            return r.claims;
+        };
+        */
         store.dispatch("favorites/fetchFavorites");
         store.dispatch("cart/fetchCart");
     } else {
@@ -50,12 +70,23 @@ const handleAuthStateChange = async (user) => {
 
 // Wait for onAuthStateChanged before mounting app -> this way on init the router will already have the currentUser.
 // This caused so much trouble, just leave it as it is
-onAuthStateChanged(auth, async (user) => {
-    await handleAuthStateChange(user);
+let appMounted = false;
 
-    createApp(App)
-        .use(store)
-        .use(router)
-        .use(vuetify)
-        .mount('#app')
+onAuthStateChanged(auth, async (user) => {
+    try {
+        await handleAuthStateChange(user);
+    } catch (err) {
+        console.error("Error handling auth state change:", err);
+    }
+
+    // Mount the app only once
+    if (!appMounted) {
+        createApp(App)
+            .use(store)
+            .use(router)
+            .use(vuetify)
+            .mount('#app');
+
+        appMounted = true;
+    }
 })
