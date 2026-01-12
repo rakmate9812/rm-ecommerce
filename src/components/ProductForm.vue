@@ -41,7 +41,17 @@
 
       <input v-model="product.shortDescription" placeholder="Short description" />
       <textarea v-model="product.description" placeholder="Description"></textarea>
-      <input v-model="product.imageUrl" placeholder="Image URL" />
+
+      <div>
+        <label>Product image</label>
+        <input type="file" accept="image/*" @change="onFileSelected" />
+        <div v-if="imagePreview" style="margin-top: 8px">
+          <img
+            :src="imagePreview"
+            alt="preview"
+            style="max-width: 200px; max-height: 200px; object-fit: contain; border: 1px solid #ddd" />
+        </div>
+      </div>
 
       <button type="submit">
         {{ selectedProductId ? "Update Product" : "Add Product" }}
@@ -52,11 +62,14 @@
 </template>
 
 <script>
+import { uploadFile /*, deleteFile*/ } from "@/services/firebaseStorageService";
 export default {
   data() {
     return {
       selectedProductId: "",
       product: this.getEmptyProduct(),
+      selectedImageFile: null,
+      imagePreview: null,
     };
   },
   computed: {
@@ -100,8 +113,30 @@ export default {
       }
     },
 
+    onFileSelected(event) {
+      const file = event.target.files?.[0];
+      if (!file) {
+        this.selectedImageFile = null;
+        this.imagePreview = null;
+        return;
+      }
+      this.selectedImageFile = file;
+      this.imagePreview = URL.createObjectURL(file);
+    },
+
     async submitProduct() {
       try {
+        // If a file is selected, upload it first and set product.imageUrl
+        if (this.selectedImageFile) {
+          // Build a path. Use product id or timestamp to avoid collisions.
+          const filename = `${Date.now()}_${this.selectedImageFile.name.replace(/\s+/g, "_")}`;
+          const path = `product_images/${this.selectedProductId || "new"}/${filename}`;
+          const { url, path: storagePath } = await uploadFile(this.selectedImageFile, path);
+          // Save the download URL and also keep storagePath if want to delete later
+          this.product.imageUrl = url;
+          this.product.imageStoragePath = storagePath;
+        }
+
         if (this.selectedProductId) {
           await this.$store.dispatch("data/updateDataInDb", {
             path: `products/${this.selectedProductId}`,
@@ -126,6 +161,8 @@ export default {
     resetForm() {
       this.selectedProductId = "";
       this.product = this.getEmptyProduct();
+      this.selectedImageFile = null;
+      this.imagePreview = null;
     },
   },
 };
